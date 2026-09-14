@@ -1,0 +1,9 @@
+{
+  "name": "gallery-link-theme-park",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Printbox Embed — Gallery Link Theme Park clone (static frontend + Vercel serverless backend)",
+  "dependencies": {
+    "@vercel/blob": "^0.27.0"
+  }
+}

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gallery Link — Admin</title>
+<style>
+  :root {
+    --bg: #0f1014;
+    --card: #1a1b21;
+    --border: #2a2b32;
+    --text: #e8e8ec;
+    --muted: #9a9aa3;
+    --faint: #777783;
+    --accent: #4d8dff;
+    --accent-hover: #6ba0ff;
+    --danger: #ff6b6b;
+    --danger-hover: #ff8484;
+    --success: #00c853;
+    --code-bg: #25262d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 32px 20px;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 28px; margin-bottom: 16px;
+  }
+  h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 18px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+  label {
+    display: block; font-size: 12px; font-weight: 600; color: var(--muted);
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  input, textarea, select {
+    width: 100%; padding: 9px 11px; font-size: 14px;
+    background: #14151a; color: var(--text);
+    border: 1px solid var(--border); border-radius: 7px;
+    margin-bottom: 12px; font-family: inherit;
+  }
+  textarea { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12.5px; min-height: 90px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .btn {
+    background: var(--accent); color: white; border: 0;
+    padding: 10px 18px; font-size: 14px; font-weight: 600;
+    border-radius: 7px; cursor: pointer; font-family: inherit;
+  }
+  .btn:hover { background: var(--accent-hover); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary { background: #25262d; color: var(--text); }
+  .btn-secondary:hover { background: #30313a; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: var(--danger-hover); }
+  .btn-small { padding: 6px 12px; font-size: 12px; }
+  .actions { display: flex; gap: 8px; margin-top: 8px; }
+  .product-list { display: flex; flex-direction: column; gap: 10px; }
+  .product-row {
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 14px;
+    align-items: center; padding: 12px; background: #14151a;
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .product-row img {
+    width: 56px; height: 56px; object-fit: cover;
+    border-radius: 7px; background: #25262d;
+  }
+  .product-row .meta { min-width: 0; }
+  .product-row .name { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .product-row .details { font-size: 11px; color: var(--faint); font-family: ui-monospace, monospace; line-height: 1.4; }
+  .product-row .actions { margin: 0; gap: 6px; }
+  .radio-row {
+    display: flex; gap: 14px; padding: 4px 0 12px;
+    flex-wrap: wrap; align-items: center;
+  }
+  .radio-row label {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: 0; cursor: pointer;
+    font-size: 13px; text-transform: none; letter-spacing: 0;
+    color: var(--text); font-weight: 500;
+  }
+  .radio-row input[type="radio"] { width: auto; margin: 0; cursor: pointer; accent-color: var(--accent); }
+  .spec-block { display: none; }
+  .spec-block.active { display: block; }
+  .toast {
+    padding: 12px 14px; border-radius: 8px; font-size: 13px;
+    margin-bottom: 14px; word-break: break-word;
+  }
+  .toast.success { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); border-left: 3px solid var(--success); }
+  .toast.error { background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--danger); border-left: 3px solid var(--danger); }
+  .toast.hidden { display: none; }
+  .hint { font-size: 11px; color: var(--faint); margin: -8px 0 12px; line-height: 1.5; }
+  .hint code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11px; }
+  .head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .head-row .nav { display: flex; gap: 8px; }
+  .login-form { max-width: 360px; margin: 0 auto; }
+  .login-form input { margin-bottom: 14px; }
+  .checkbox-line {
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+    font-size: 13px; color: var(--text); margin: 4px 0 4px;
+    text-transform: none; letter-spacing: 0; font-weight: 500;
+  }
+  .checkbox-line input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; accent-color: var(--accent); }
+  .variant-row {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin-bottom: 10px; background: #14151a;
+    position: relative;
+  }
+  .variant-row .variant-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; gap: 10px;
+  }
+  .variant-row .variant-head strong {
+    font-size: 12px; color: var(--faint); text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .variant-row input, .variant-row select, .variant-row textarea { margin-bottom: 8px; }
+  .variant-row .radio-row { padding: 2px 0 8px; }
+  .variant-row .spec-block { padding-left: 0; }
+  .variant-row textarea { min-height: 70px; }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="loginView">
+  <div class="card">
+    <h1>Gallery Link — Admin</h1>
+    <p class="sub">Wpisz hasło aby zarządzać listą produktów.</p>
+    <form class="login-form" id="loginForm">
+      <label for="adminPassword">Hasło</label>
+      <input id="adminPassword" type="password" autocomplete="current-password" required autofocus>
+      <button type="submit" class="btn" style="width: 100%">Zaloguj</button>
+      <div id="loginToast" class="toast error hidden" style="margin-top: 14px;"></div>
+    </form>
+  </div>
+</div>
+
+<div class="wrap" id="adminView" style="display: none;">
+  <div class="card">
+    <div class="head-row">
+      <div>
+        <h1>Gallery Link — Admin</h1>
+        <p class="sub" style="margin: 0;">Definiuj produkty widoczne na froncie. Zmiany zapisują się do Vercel Blob.</p>
+      </div>
+      <div class="nav">
+        <button type="button" class="btn btn-secondary btn-small" id="logoutBtn">Wyloguj</button>
+        <a href="/" class="btn btn-secondary btn-small" style="text-decoration: none; display: inline-flex; align-items: center;">← Front</a>
+      </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <div class="head-row">
+      <h2 style="margin: 0;">Produkty <span id="count" style="color: var(--faint); font-weight: 400; font-size: 14px;"></span></h2>
+      <div class="nav">
+        <button type="button" class="btn btn-secondary btn-small" id="reloadBtn">↻ Reload</button>
+        <button type="button" class="btn btn-small" id="addBtn">+ Dodaj produkt</button>
+      </div>
+    </div>
+
+    <div class="product-list" id="productList"></div>
+  </div>
+
+  <div class="card" id="editorCard" style="display: none;">
+    <div class="head-row">
+      <h2 style="margin: 0;" id="editorTitle">Nowy produkt</h2>
+      <button type="button" class="btn btn-secondary btn-small" id="cancelEditBtn">Anuluj</button>
+    </div>
+
+    <form id="productForm">
+      <div class="row">
+        <div>
+          <label for="f_id">ID (wewnętrzny klucz) *</label>
+          <input id="f_id" required pattern="[a-z0-9_-]+" placeholder="book / cal / frame">
+          <div class="hint">Mała litera + cyfry, bez spacji. Używane jako klucz, raz utworzonego nie zmieniaj.</div>
+        </div>
+        <div>
+          <label for="f_name">Nazwa na froncie *</label>
+          <input id="f_name" required placeholder="Photobook">
+        </div>
+      </div>
+
+      <label for="f_thumb">Thumbnail URL *</label>
+      <input id="f_thumb" required placeholder="https://… lub assets/photobook.jpg">
+
+      <div class="row">
+        <div>
+          <label for="f_min">Min photos *</label>
+          <input id="f_min" type="number" min="1" required placeholder="26">
+        </div>
+        <div>
+          <label for="f_max">Max photos</label>
+          <input id="f_max" type="number" min="1" placeholder="100">
+        </div>
+      </div>
+
+      <label class="checkbox-line">
+        <input type="checkbox" id="f_useVariants">
+        <span>Multiple variants (auto-pick by photo orientation)</span>
+      </label>
+      <div class="hint">Włącz dla produktu który ma osobne ustawienia per orientacja zdjęcia (np. Frame portrait/landscape/square). Front pokaże jedną kartę i sam wybierze variant na bazie wybranego zdjęcia.</div>
+
+      <label class="checkbox-line" style="margin-top: 10px;">
+        <input type="checkbox" id="f_allowOwnPhotos">
+        <span>Pozwól użytkownikowi dodać własne zdjęcia (Upload step)</span>
+      </label>
+      <div class="hint">Domyślnie wyłączone. Włącz dla produktów typu Photobook gdzie sensownie mieszać zdjęcia z galerii z własnymi.</div>
+
+      <!-- ── Flat product spec (when "Multiple variants" is off) ── -->
+      <div id="flatSpec">
+        <label for="f_family">productFamilyId *</label>
+        <input id="f_family" placeholder="305">
+
+        <label>Specyfikacja produktu (wybierz jedną) *</label>
+        <div class="radio-row">
+          <label><input type="radio" name="spec" value="productId" checked> productId (numeric)</label>
+          <label><input type="radio" name="spec" value="slug"> slug (friendly_url)</label>
+          <label><input type="radio" name="spec" value="attributeValues"> attributeValues</label>
+        </div>
+
+        <div class="spec-block active" data-spec="productId">
+          <label for="f_productId">Numeric product_id</label>
+          <input id="f_productId" placeholder="7605">
+          <div class="hint">Liczbowy ID produktu z Printboxa, jako string. Edytor traktuje go jak friendly_url — może 404'ować, sprawdź u siebie.</div>
+        </div>
+
+        <div class="spec-block" data-spec="slug">
+          <label for="f_slug">friendly_url slug</label>
+          <input id="f_slug" placeholder="photobook-pulse">
+          <div class="hint">Slug z <code>GET /api/ec/v4/products/{id}/</code> → <code>friendly_url</code>.</div>
+        </div>
+
+        <div class="spec-block" data-spec="attributeValues">
+          <label for="f_attrs">attributeValues (JSON)</label>
+          <textarea id="f_attrs" placeholder='{"orientation": "horizontal", "size": "12x8", "theme": "concertFrame"}'></textarea>
+          <div class="hint">JSON-owy obiekt z kluczami atrybutów (orientation, size, theme, frameColor, frameThickness...).</div>
+        </div>
+
+        <label for="f_method">Creation method</label>
+        <select id="f_method">
+          <option value="">— auto (api jeśli numeric productId, else editor)</option>
+          <option value="api">api — POST /api/ec/v4/projects/ (backend tworzy projekt)</option>
+          <option value="editor">editor — productId/attributeValues prosto do setEditorConfig</option>
+        </select>
+
+        <label for="f_editorParams">Editor params (JSON, opcjonalne)</label>
+        <textarea id="f_editorParams" rows="6" placeholder='{
+  "personalizedPresentationContent": {
+    "version": 1,
+    "components": {
+      "bandName": "{{bandName}}",
+      "concertDnV": "{{concertDnV}}",
+      "photo1": "{{photo1}}"
+    }
+  }
+}'></textarea>
+        <div class="hint">Dodatkowe pola spreadowane do <code>setEditorConfig</code>. Stringi z placeholderami <code>{{bandName}}</code> / <code>{{concertDnV}}</code> / <code>{{customImageUrl}}</code> / <code>{{photo1}}</code> / <code>{{photo2}}</code>… są podstawiane runtime. Brak wartości w kontekście → klucz usuwany z output.</div>
+
+        <label for="f_urlSuffix">Editor URL suffix (opcjonalne)</label>
+        <input id="f_urlSuffix" placeholder="&dapi=...&pbxEditorRelease=...&pbxAssetsRelease=...">
+        <div class="hint">Dokleja się literalnie do końca URL-a edytora (po wszystkich naszych paramach). Jeśli nie zaczyna się od <code>&amp;</code> lub <code>?</code> — automatycznie prefixujemy <code>&amp;</code>. Użyteczne dla Printbox release switchy / dapi.</div>
+      </div>
+
+      <!-- ── Variants editor (when "Multiple variants" is on) ── -->
+      <div id="variantsSpec" style="display: none;">
+        <label>Variants <span style="color: var(--faint); font-weight: 400; font-size: 11px;">— jeden zestaw per orientacja zdjęcia</span></label>
+        <div id="variantsList"></div>
+        <button type="button" class="btn btn-secondary btn-small" id="addVariantBtn" style="margin-top: 4px;">+ Dodaj variant</button>
+      </div>
+
+      <div class="actions" style="margin-top: 20px;">
+        <button type="submit" class="btn">Zapisz produkt</button>
+        <button type="button" class="btn btn-secondary" id="cancelEditBtn2">Anuluj</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const PWD_KEY = 'pbx-admin-pwd';
+const $ = (id) => document.getElementById(id);
+
+let products = [];
+let editingIdx = null;  // index in `products` array, or null for new
+
+// ── auth ──────────────────────────────────────────────────────────────
+function isLoggedIn() { return !!sessionStorage.getItem(PWD_KEY); }
+function getPwd() { return sessionStorage.getItem(PWD_KEY) || ''; }
+
+function showLogin() {
+  $('loginView').style.display = '';
+  $('adminView').style.display = 'none';
+  $('adminPassword').focus();
+}
+function showAdmin() {
+  $('loginView').style.display = 'none';
+  $('adminView').style.display = '';
+  loadProducts();
+}
+
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const pwd = $('adminPassword').value;
+  const toast = $('loginToast');
+  toast.classList.add('hidden');
+  // Verify by attempting a no-op write of the current products list.
+  // Simpler: just store and let first save reveal mismatch. For better UX,
+  // we POST current products back and check if 200 / 401.
+  try {
+    const getRes = await fetch('/api/products');
+    const getData = await getRes.json();
+    const current = (getData.products) || [];
+    const verifyRes = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': pwd },
+      body: JSON.stringify({ products: current }),
+    });
+    if (verifyRes.status === 401) {
+      toast.textContent = 'Złe hasło.';
+      toast.classList.remove('hidden');
+      return;
+    }
+    if (!verifyRes.ok) {
+      const data = await verifyRes.json().catch(() => ({}));
+      toast.textContent = 'Błąd: ' + (data.error || verifyRes.status);
+      toast.classList.remove('hidden');
+      return;
+    }
+    sessionStorage.setItem(PWD_KEY, pwd);
+    showAdmin();
+  } catch (err) {
+    toast.textContent = 'Błąd: ' + err.message;
+    toast.classList.remove('hidden');
+  }
+});
+
+$('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem(PWD_KEY);
+  showLogin();
+});
+
+// ── data load / save ──────────────────────────────────────────────────
+async function loadProducts() {
+  const toast = $('toast');
+  toast.classList.add('hidden');
+  try {
+    const res = await fetch('/api/products');
+    const data = await res.json();
+    products = data.products || [];
+    renderList();
+  } catch (err) {
+    toast.textContent = 'Nie udało się pobrać produktów: ' + err.message;
+    toast.className = 'toast error';
+    toast.classList.remove('hidden');
+  }
+}
+
+async function saveProducts(next) {
+  const res = await fetch('/api/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Password': getPwd() },
+    body: JSON.stringify({ products: next }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) {
+    sessionStorage.removeItem(PWD_KEY);
+    showLogin();
+    throw new Error('Sesja wygasła, zaloguj się ponownie.');
+  }
+  if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+  products = next;
+  return data;
+}
+
+function flash(message, kind = 'success') {
+  const toast = $('toast');
+  toast.textContent = message;
+  toast.className = 'toast ' + kind;
+  toast.classList.remove('hidden');
+  setTimeout(() => toast.classList.add('hidden'), 4000);
+}
+
+// ── product list rendering ────────────────────────────────────────────
+function renderList() {
+  $('count').textContent = products.length ? '(' + products.length + ')' : '';
+  const list = $('productList');
+  list.innerHTML = '';
+  if (products.length === 0) {
+    list.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--faint);">Brak produktów. Kliknij <strong>+ Dodaj produkt</strong>.</div>';
+    return;
+  }
+  products.forEach((p, idx) => {
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    let detailsLine;
+    if (Array.isArray(p.variants) && p.variants.length > 0) {
+      const summary = p.variants.map((v) => {
+        const ori = v.orientation || '—';
+        const band = v.band ? '/' + v.band : '';
+        return ori + band;
+      }).join(', ');
+      detailsLine = `${p.variants.length} variants [${escapeText(summary)}] · min ${p.minPhotos}${p.maxPhotos ? ' / max ' + p.maxPhotos : ''}`;
+    } else {
+      const spec = p.productId ? 'productId: ' + p.productId
+        : p.slug ? 'slug: ' + p.slug
+        : p.attributeValues ? 'attrs: ' + Object.keys(p.attributeValues).length + ' keys'
+        : '(brak spec)';
+      detailsLine = `family ${escapeText(p.familyId)} · ${escapeText(spec)} · min ${p.minPhotos}${p.maxPhotos ? ' / max ' + p.maxPhotos : ''}`;
+    }
+    row.innerHTML = `
+      <img src="${escapeAttr(p.thumbnailUrl || '')}" alt="" onerror="this.style.opacity=0">
+      <div class="meta">
+        <div class="name">${escapeText(p.name)} <span style="color: var(--faint); font-weight: 400; font-size: 12px;">(${escapeText(p.id)})</span></div>
+        <div class="details">${detailsLine}</div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary btn-small" data-edit="${idx}">Edytuj</button>
+        <button type="button" class="btn btn-danger btn-small" data-delete="${idx}">Usuń</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', (e) => openEditor(parseInt(e.currentTarget.getAttribute('data-edit'), 10))));
+  list.querySelectorAll('[data-delete]').forEach((b) => b.addEventListener('click', (e) => deleteProduct(parseInt(e.currentTarget.getAttribute('data-delete'), 10))));
+}
+
+function escapeText(s) {
+  return String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+}
+function escapeAttr(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+// ── editor ────────────────────────────────────────────────────────────
+function openEditor(idx) {
+  editingIdx = idx;
+  const p = idx == null ? null : products[idx];
+  $('editorTitle').textContent = p ? 'Edytuj: ' + p.name : 'Nowy produkt';
+  $('editorCard').style.display = '';
+
+  $('f_id').value = p ? p.id : '';
+  $('f_id').disabled = !!p;
+  $('f_name').value = p ? p.name : '';
+  $('f_thumb').value = p ? (p.thumbnailUrl || '') : '';
+  $('f_min').value = p ? (p.minPhotos != null ? p.minPhotos : '') : '';
+  $('f_max').value = p && p.maxPhotos != null ? p.maxPhotos : '';
+
+  // Variant mode vs flat mode toggle
+  const hasVariants = !!(p && Array.isArray(p.variants) && p.variants.length > 0);
+  $('f_useVariants').checked = hasVariants;
+  toggleVariantsMode(hasVariants);
+  $('f_allowOwnPhotos').checked = !!(p && p.allowOwnPhotos);
+
+  // Flat fields (used when not in variants mode)
+  $('f_family').value = p && !hasVariants ? (p.familyId || '') : '';
+  let spec = 'productId';
+  if (p && !hasVariants) {
+    if (p.attributeValues) spec = 'attributeValues';
+    else if (p.slug) spec = 'slug';
+  }
+  document.querySelectorAll('#flatSpec input[name="spec"]').forEach((r) => r.checked = (r.value === spec));
+  switchSpec(spec);
+  $('f_productId').value = p && !hasVariants && p.productId ? p.productId : '';
+  $('f_slug').value = p && !hasVariants && p.slug ? p.slug : '';
+  $('f_attrs').value = p && !hasVariants && p.attributeValues ? JSON.stringify(p.attributeValues, null, 2) : '';
+  $('f_method').value = p && !hasVariants && p.creationMethod ? p.creationMethod : '';
+  $('f_editorParams').value = p && !hasVariants && p.editorParams ? JSON.stringify(p.editorParams, null, 2) : '';
+  $('f_urlSuffix').value = p && !hasVariants && p.editorUrlSuffix ? p.editorUrlSuffix : '';
+
+  // Variants list
+  $('variantsList').innerHTML = '';
+  if (hasVariants) {
+    p.variants.forEach((v) => addVariantRow(v));
+  }
+
+  $('editorCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleVariantsMode(on) {
+  $('flatSpec').style.display = on ? 'none' : '';
+  $('variantsSpec').style.display = on ? '' : 'none';
+  $('f_family').required = !on;
+}
+
+function addVariantRow(v) {
+  const list = $('variantsList');
+  const row = document.createElement('div');
+  row.className = 'variant-row';
+  // Auto-pick the next free orientation only when *adding a fresh row* via
+  // "+ Dodaj variant" (v === undefined). When loading an existing variant,
+  // honour whatever was saved — including the "any" case where orientation
+  // is undefined / null — otherwise reopening admin silently rewrites
+  // orientation:undefined into "landscape"/"portrait" and breaks band-only
+  // matching (variants disqualify themselves on a phantom orientation).
+  let ori = '';
+  if (v) {
+    ori = v.orientation || '';
+  } else {
+    const usedOrientations = Array.from(list.querySelectorAll('select.v_orientation'))
+      .map((s) => s.value).filter(Boolean);
+    ori = ['landscape', 'portrait', 'square'].find((o) => !usedOrientations.includes(o)) || 'landscape';
+  }
+  const spec = v && v.attributeValues ? 'attributeValues' : v && v.slug ? 'slug' : 'productId';
+
+  row.innerHTML = `
+    <div class="variant-head">
+      <strong>Variant</strong>
+      <button type="button" class="btn btn-danger btn-small v_remove">Usuń variant</button>
+    </div>
+    <div class="row-3">
+      <div>
+        <label style="text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--faint); font-weight: 500;">Orientation</label>
+        <select class="v_orientation">
+          <option value="">— (any)</option>
+          <option value="landscape">landscape (w &gt; h)</option>
+          <option value="portrait">portrait (h &gt; w)</option>
+          <option value="square">square (h ≈ w)</option>
+        </select>
+      </div>
+      <div>
+        <label style="text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--faint); font-weight: 500;">Band (concert.artist)</label>
+        <input class="v_band" placeholder="WITHERED CROWN">
+      </div>
+      <div>
+        <label style="text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--faint); font-weight: 500;">productFamilyId</label>
+        <input class="v_family" placeholder="304">
+      </div>
+    </div>
+    <div class="radio-row">
+      <label><input type="radio" name="vspec_TMP" value="productId"> productId</label>
+      <label><input type="radio" name="vspec_TMP" value="slug"> slug</label>
+      <label><input type="radio" name="vspec_TMP" value="attributeValues"> attributeValues</label>
+    </div>
+    <div class="spec-block" data-vspec="productId">
+      <input class="v_productId" placeholder="7607">
+    </div>
+    <div class="spec-block" data-vspec="slug">
+      <input class="v_slug" placeholder="pic-frame-portrait">
+    </div>
+    <div class="spec-block" data-vspec="attributeValues">
+      <textarea class="v_attrs" placeholder='{"orientation": "vertical", "size": "8x12", "theme": "concertFrame"}'></textarea>
+    </div>
+    <div class="row">
+      <div>
+        <label style="text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--faint); font-weight: 500;">Creation method</label>
+        <select class="v_method">
+          <option value="">— auto</option>
+          <option value="api">api (POST /api/ec/v4/projects/)</option>
+          <option value="editor">editor (direct setEditorConfig)</option>
+        </select>
+      </div>
+      <div></div>
+    </div>
+    <label style="text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--faint); font-weight: 500; margin-top: 4px;">editorParams (JSON, opcjonalne — placeholdery {{bandName}}, {{photo1}}, …)</label>
+    <textarea class="v_editorParams" rows="5" placeholder='{"personalizedPresentationContent": {"version": 1, "components": {"bandName": "{{bandName}}", "photo1": "{{photo1}}"}}}'></textarea>
+    <label style="text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--faint); font-weight: 500; margin-top: 4px;">Editor URL suffix (opcjonalne — np. &amp;dapi=...&amp;pbxEditorRelease=...)</label>
+    <input class="v_urlSuffix" placeholder="&dapi=...&pbxEditorRelease=...&pbxAssetsRelease=...">
+  `;
+
+  const groupName = 'vspec_' + Math.random().toString(36).slice(2, 8);
+  row.querySelectorAll('input[name="vspec_TMP"]').forEach((r) => {
+    r.name = groupName;
+    if (r.value === spec) r.checked = true;
+    r.addEventListener('change', () => switchVariantSpec(row, r.value));
+  });
+  switchVariantSpec(row, spec);
+
+  row.querySelector('.v_orientation').value = ori;
+  row.querySelector('.v_band').value = v && v.band ? v.band : '';
+  row.querySelector('.v_family').value = v && v.familyId ? v.familyId : '';
+  row.querySelector('.v_productId').value = v && v.productId ? v.productId : '';
+  row.querySelector('.v_slug').value = v && v.slug ? v.slug : '';
+  row.querySelector('.v_attrs').value = v && v.attributeValues ? JSON.stringify(v.attributeValues, null, 2) : '';
+  row.querySelector('.v_method').value = v && v.creationMethod ? v.creationMethod : '';
+  row.querySelector('.v_editorParams').value = v && v.editorParams ? JSON.stringify(v.editorParams, null, 2) : '';
+  row.querySelector('.v_urlSuffix').value = v && v.editorUrlSuffix ? v.editorUrlSuffix : '';
+
+  row.querySelector('.v_remove').addEventListener('click', () => row.remove());
+  list.appendChild(row);
+}
+
+function switchVariantSpec(row, spec) {
+  row.querySelectorAll('.spec-block').forEach((b) => {
+    b.classList.toggle('active', b.getAttribute('data-vspec') === spec);
+  });
+}
+
+function readVariantsFromForm() {
+  const rows = Array.from($('variantsList').querySelectorAll('.variant-row'));
+  if (rows.length === 0) throw new Error('Dodaj co najmniej jeden variant.');
+  const variants = [];
+  const seenKeys = new Set();
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const orientation = row.querySelector('.v_orientation').value;
+    const band = row.querySelector('.v_band').value.trim();
+    const familyId = row.querySelector('.v_family').value.trim();
+    const specRadio = row.querySelector('input[name^="vspec_"]:checked');
+    if (!specRadio) throw new Error(`Variant ${i + 1}: wybierz typ specyfikacji.`);
+    const spec = specRadio.value;
+    const label = `${orientation || '—'}/${band || '—'}`;
+    if (!orientation && !band) throw new Error(`Variant ${i + 1}: ustaw orientation albo band (albo oba).`);
+    if (!familyId) throw new Error(`Variant ${i + 1} (${label}): familyId jest wymagany.`);
+    const key = band + '|' + orientation;
+    if (seenKeys.has(key)) throw new Error(`Variant (orientation=${orientation || '—'}, band=${band || '—'}) podany dwa razy.`);
+    seenKeys.add(key);
+    const entry = { familyId };
+    if (orientation) entry.orientation = orientation;
+    if (band) entry.band = band;
+    if (spec === 'productId') {
+      const val = row.querySelector('.v_productId').value.trim();
+      if (!val) throw new Error(`Variant ${i + 1} (${label}): productId pusty.`);
+      entry.productId = val;
+    } else if (spec === 'slug') {
+      const val = row.querySelector('.v_slug').value.trim();
+      if (!val) throw new Error(`Variant ${i + 1} (${label}): slug pusty.`);
+      entry.slug = val;
+    } else {
+      const raw = row.querySelector('.v_attrs').value.trim();
+      if (!raw) throw new Error(`Variant ${i + 1} (${label}): attributeValues puste.`);
+      try {
+        const obj = JSON.parse(raw);
+        if (typeof obj !== 'object' || Array.isArray(obj)) throw new Error('musi być obiektem');
+        entry.attributeValues = obj;
+      } catch (err) {
+        throw new Error(`Variant ${i + 1} (${label}): niepoprawny JSON — ${err.message}`);
+      }
+    }
+    const method = row.querySelector('.v_method').value;
+    if (method) entry.creationMethod = method;
+    const epRaw = row.querySelector('.v_editorParams').value.trim();
+    if (epRaw) {
+      try {
+        const obj = JSON.parse(epRaw);
+        if (typeof obj !== 'object' || Array.isArray(obj)) throw new Error('musi być obiektem');
+        entry.editorParams = obj;
+      } catch (err) {
+        throw new Error(`Variant ${i + 1} (${label}): editorParams niepoprawny JSON — ${err.message}`);
+      }
+    }
+    const suffix = row.querySelector('.v_urlSuffix').value.trim();
+    if (suffix) entry.editorUrlSuffix = suffix;
+    variants.push(entry);
+  }
+  return variants;
+}
+
+function closeEditor() {
+  $('editorCard').style.display = 'none';
+  editingIdx = null;
+}
+
+function switchSpec(spec) {
+  document.querySelectorAll('.spec-block').forEach((b) => {
+    b.classList.toggle('active', b.getAttribute('data-spec') === spec);
+  });
+}
+
+document.querySelectorAll('input[name="spec"]').forEach((r) => {
+  r.addEventListener('change', (e) => switchSpec(e.target.value));
+});
+
+$('addBtn').addEventListener('click', () => openEditor(null));
+$('cancelEditBtn').addEventListener('click', closeEditor);
+$('cancelEditBtn2').addEventListener('click', closeEditor);
+$('reloadBtn').addEventListener('click', loadProducts);
+$('addVariantBtn').addEventListener('click', () => addVariantRow());
+$('f_useVariants').addEventListener('change', (e) => {
+  toggleVariantsMode(e.target.checked);
+  // Pre-seed an empty variant row when switching INTO variant mode so the
+  // user has something to fill in.
+  if (e.target.checked && $('variantsList').children.length === 0) addVariantRow();
+});
+
+$('productForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = $('f_id').value.trim();
+  const useVariants = $('f_useVariants').checked;
+  const productData = {
+    id,
+    name: $('f_name').value.trim(),
+    thumbnailUrl: $('f_thumb').value.trim(),
+    minPhotos: parseInt($('f_min').value, 10),
+  };
+  const maxRaw = $('f_max').value.trim();
+  if (maxRaw) productData.maxPhotos = parseInt(maxRaw, 10);
+  if ($('f_allowOwnPhotos').checked) productData.allowOwnPhotos = true;
+
+  if (useVariants) {
+    try {
+      productData.variants = readVariantsFromForm();
+    } catch (err) {
+      return flash(err.message, 'error');
+    }
+  } else {
+    productData.familyId = $('f_family').value.trim();
+    if (!productData.familyId) return flash('Wpisz productFamilyId.', 'error');
+    const spec = document.querySelector('#flatSpec input[name="spec"]:checked').value;
+    if (spec === 'productId') {
+      productData.productId = $('f_productId').value.trim();
+      if (!productData.productId) return flash('Wpisz productId.', 'error');
+    } else if (spec === 'slug') {
+      productData.slug = $('f_slug').value.trim();
+      if (!productData.slug) return flash('Wpisz slug.', 'error');
+    } else if (spec === 'attributeValues') {
+      const raw = $('f_attrs').value.trim();
+      if (!raw) return flash('Wpisz attributeValues (JSON).', 'error');
+      try {
+        productData.attributeValues = JSON.parse(raw);
+        if (typeof productData.attributeValues !== 'object' || Array.isArray(productData.attributeValues)) {
+          return flash('attributeValues musi być obiektem JSON.', 'error');
+        }
+      } catch (err) {
+        return flash('Niepoprawny JSON: ' + err.message, 'error');
+      }
+    }
+    const method = $('f_method').value;
+    if (method) productData.creationMethod = method;
+    const epRaw = $('f_editorParams').value.trim();
+    if (epRaw) {
+      try {
+        const obj = JSON.parse(epRaw);
+        if (typeof obj !== 'object' || Array.isArray(obj)) return flash('editorParams musi być obiektem JSON.', 'error');
+        productData.editorParams = obj;
+      } catch (err) {
+        return flash('editorParams niepoprawny JSON: ' + err.message, 'error');
+      }
+    }
+    const suffix = $('f_urlSuffix').value.trim();
+    if (suffix) productData.editorUrlSuffix = suffix;
+  }
+
+  const next = products.slice();
+  if (editingIdx == null) {
+    if (next.some((p) => p.id === id)) return flash('Produkt o id "' + id + '" już istnieje.', 'error');
+    next.push(productData);
+  } else {
+    next[editingIdx] = productData;
+  }
+
+  try {
+    await saveProducts(next);
+    flash(editingIdx == null ? 'Dodano produkt: ' + productData.name : 'Zaktualizowano: ' + productData.name);
+    closeEditor();
+    renderList();
+  } catch (err) {
+    flash('Błąd zapisu: ' + err.message, 'error');
+  }
+});
+
+async function deleteProduct(idx) {
+  const p = products[idx];
+  if (!p) return;
+  if (!confirm('Usunąć produkt "' + p.name + '"?')) return;
+  const next = products.slice();
+  next.splice(idx, 1);
+  try {
+    await saveProducts(next);
+    flash('Usunięto: ' + p.name);
+    renderList();
+  } catch (err) {
+    flash('Błąd usuwania: ' + err.message, 'error');
+  }
+}
+
+// ── init ──────────────────────────────────────────────────────────────
+if (isLoggedIn()) showAdmin();
+else showLogin();
+</script>
+
+</body>
+</html>

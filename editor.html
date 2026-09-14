@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Printbox Embed — Test Page</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --text: #1a1a1f;
+    --text-muted: #666;
+    --text-faint: #888;
+    --text-label: #444;
+    --card-bg: #fff;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+    --fieldset-border: #ececef;
+    --input-bg: #fff;
+    --input-border: #dcdde1;
+    --input-placeholder: #aaa;
+    --code-bg: #f0f0f3;
+    --accent: #0066ff;
+    --accent-hover: #0055d4;
+    --secondary-bg: #eef0f3;
+    --secondary-hover: #e3e5ea;
+    --secondary-text: #333;
+    --topbar-bg: #1a1a1f;
+    --badge-bg: #2d2d35;
+    --badge-text: #d0d0d5;
+    --app-bg: #fff;
+    --error-text: #c00;
+    --error-bg: #fff5f5;
+    --error-code-bg: #ffe0e0;
+    --toggle-border: #dcdde1;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1014;
+    --text: #e8e8ec;
+    --text-muted: #9a9aa3;
+    --text-faint: #777783;
+    --text-label: #b8b8c0;
+    --card-bg: #1a1b21;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+    --fieldset-border: #2a2b32;
+    --input-bg: #14151a;
+    --input-border: #2f3038;
+    --input-placeholder: #565660;
+    --code-bg: #25262d;
+    --accent: #4d8dff;
+    --accent-hover: #6ba0ff;
+    --secondary-bg: #25262d;
+    --secondary-hover: #30313a;
+    --secondary-text: #d8d8de;
+    --topbar-bg: #08090c;
+    --badge-bg: #25262d;
+    --badge-text: #d0d0d5;
+    --app-bg: #14151a;
+    --error-text: #ff6b6b;
+    --error-bg: #2a1515;
+    --error-code-bg: #3a1f1f;
+    --toggle-border: #2f3038;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); transition: background 0.2s, color 0.2s; }
+  .wrap { max-width: 720px; margin: 40px auto; padding: 0 20px; }
+  .card { background: var(--card-bg); border-radius: 14px; box-shadow: var(--card-shadow); padding: 32px; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+  .card-header .titles { flex: 1; }
+  h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -0.01em; }
+  .sub { color: var(--text-muted); font-size: 13px; margin: 0; }
+  fieldset { border: 1px solid var(--fieldset-border); border-radius: 10px; padding: 18px 20px 4px; margin: 0 0 16px; }
+  legend { font-size: 11px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 6px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--text-label); margin-bottom: 4px; }
+  input { width: 100%; padding: 9px 11px; font-size: 14px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); border-radius: 7px; margin-bottom: 14px; font-family: inherit; transition: border-color 0.1s, background 0.2s, color 0.2s; }
+  input:focus { outline: none; border-color: var(--accent); }
+  input::placeholder { color: var(--input-placeholder); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .hint { font-size: 11px; color: var(--text-faint); margin-top: -10px; margin-bottom: 14px; line-height: 1.5; }
+  .hint code { background: var(--code-bg); color: var(--text); padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+  .actions { display: flex; gap: 8px; margin-top: 8px; }
+  button { background: var(--accent); color: white; border: 0; padding: 10px 18px; font-size: 14px; font-weight: 600; border-radius: 7px; cursor: pointer; font-family: inherit; }
+  button:hover { background: var(--accent-hover); }
+  button.secondary { background: var(--secondary-bg); color: var(--secondary-text); }
+  button.secondary:hover { background: var(--secondary-hover); }
+  .theme-toggle { background: transparent; border: 1px solid var(--toggle-border); color: var(--text); padding: 6px 10px; font-size: 16px; border-radius: 7px; cursor: pointer; line-height: 1; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+  .theme-toggle:hover { background: var(--secondary-bg); }
+  .theme-toggle .label { font-size: 12px; }
+  #editor-wrap { display: none; min-height: 100vh; }
+  #editor-wrap.active { display: block; }
+  .form.hidden { display: none; }
+  .topbar { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: var(--topbar-bg); flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 4px 8px; background: var(--badge-bg); color: var(--badge-text); border-radius: 5px; font-family: ui-monospace, SFMono-Regular, monospace; }
+  .topbar .spacer { flex: 1; }
+  .topbar button { padding: 6px 12px; font-size: 12px; }
+  .topbar .theme-toggle { border-color: #3a3b42; color: #d0d0d5; }
+  .topbar .theme-toggle:hover { background: #2d2d35; }
+  #app { min-height: calc(100vh - 44px); background: var(--app-bg); }
+  .error { padding: 40px; color: var(--error-text); font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.7; background: var(--error-bg); border-left: 4px solid var(--error-text); margin: 20px; border-radius: 4px; }
+  .error code { background: var(--error-code-bg); padding: 2px 6px; border-radius: 3px; }
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  @media (max-width: 560px) { .product-grid { grid-template-columns: 1fr; } }
+  .product-card { display: block; cursor: pointer; border: 1.5px solid var(--input-border); border-radius: 10px; padding: 14px; transition: border-color 0.15s, background 0.15s; }
+  .product-card:hover { border-color: var(--accent); }
+  .product-card input { position: absolute; opacity: 0; pointer-events: none; }
+  .product-card.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .product-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .product-meta { font-size: 11px; color: var(--text-faint); line-height: 1.5; font-family: ui-monospace, SFMono-Regular, monospace; }
+  textarea { width: 100%; padding: 9px 11px; font-size: 13px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); border-radius: 7px; margin-bottom: 14px; font-family: ui-monospace, SFMono-Regular, monospace; resize: vertical; min-height: 70px; transition: border-color 0.1s, background 0.2s, color 0.2s; }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  textarea::placeholder { color: var(--input-placeholder); }
+  .status-box { font-size: 12px; padding: 10px 12px; border-radius: 7px; margin-top: 8px; line-height: 1.6; font-family: ui-monospace, monospace; word-break: break-all; }
+  .status-box.info { background: var(--code-bg); color: var(--text-muted); }
+  .status-box.success { background: color-mix(in srgb, #00c853 12%, transparent); color: var(--text); border-left: 3px solid #00c853; }
+  .status-box.error { background: var(--error-bg); color: var(--error-text); border-left: 3px solid var(--error-text); }
+  .status-box.hidden { display: none; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .divider { display: flex; align-items: center; gap: 10px; color: var(--text-faint); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin: 28px 0 18px; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--fieldset-border); }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 0; }
+  .checkbox-row input[type="checkbox"] { width: auto; margin: 0; padding: 0; cursor: pointer; accent-color: var(--accent); }
+  .custom-image-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--fieldset-border); }
+  .custom-image-block.hidden { display: none; }
+  .custom-image-block input[type="file"] { font-size: 13px; padding: 6px 0; background: transparent; border: none; color: var(--text); margin-bottom: 0; }
+  .custom-image-block input[type="file"]::file-selector-button { background: var(--secondary-bg); color: var(--secondary-text); border: 1px solid var(--input-border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; margin-right: 10px; }
+  .custom-image-block input[type="file"]::file-selector-button:hover { background: var(--secondary-hover); }
+  .image-preview { margin-top: 12px; }
+  .image-preview img { max-width: 280px; max-height: 180px; border-radius: 7px; border: 1px solid var(--fieldset-border); display: block; }
+  .image-preview.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="form" style="display: none">
+  <div class="card">
+    <div class="card-header">
+      <div class="titles">
+        <h1>Gallery Link — quick launch</h1>
+        <p class="sub">Wybierz produkt, opcjonalnie wklej własne URL-e zdjęć i odpal edytor. Projekt zostanie utworzony przez backend na <code>sales-demo-pbx2</code>.</p>
+      </div>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <span class="icon" id="themeIcon">🌙</span>
+        <span class="label" id="themeLabel">Dark</span>
+      </button>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <label class="product-card selected" data-product="Photobook">
+        <input type="radio" name="product" value="Photobook" checked>
+        <div class="product-name">Photobook</div>
+        <div class="product-meta">family 305<br>product 7605<br>min 26 zdjęć</div>
+      </label>
+      <label class="product-card" data-product="Calendar">
+        <input type="radio" name="product" value="Calendar">
+        <div class="product-name">Calendar</div>
+        <div class="product-meta">family 220<br>product 5809<br>min 13 zdjęć</div>
+      </label>
+      <label class="product-card" data-product="Frame">
+        <input type="radio" name="product" value="Frame">
+        <div class="product-name">Frame</div>
+        <div class="product-meta">family 304<br>product 7519<br>min 1 zdjęcie</div>
+      </label>
+    </div>
+
+    <label for="galleryPhotos">Custom photo URLs (opcjonalne — jeden URL na linię)</label>
+    <textarea id="galleryPhotos" rows="3" placeholder="https://example.com/photo1.jpg
+https://example.com/photo2.jpg
+
+Zostaw puste = backend użyje zestawu demo z koncertu (sliced do min_photos dla wybranego produktu)."></textarea>
+
+    <fieldset style="margin-top: 4px;">
+      <legend>Personalization</legend>
+      <label class="checkbox-row">
+        <input type="checkbox" id="useCustomImage">
+        <span>Chcę dodać własne zdjęcie</span>
+      </label>
+      <div id="customImageBlock" class="custom-image-block hidden">
+        <input type="file" id="customImageFile" accept="image/jpeg,image/png,image/webp,image/gif">
+        <div id="customImagePreview" class="image-preview hidden"></div>
+        <div class="hint" style="margin: 10px 0 0;">Plik trafi do Vercel Blob → publiczny URL → przekazany do edytora jako <code>personalizedPresentationContent.components.customerImage1</code>.</div>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button type="button" id="galleryLaunchBtn">Create Project &amp; Launch Editor</button>
+    </div>
+    <div id="galleryStatus" class="status-box hidden"></div>
+
+    <div class="divider">Manual config (advanced)</div>
+
+    <p class="sub" style="margin-bottom: 16px;">Wpisz parametry instancji i odpal edytor ręcznie — przydatne do testowania innych instancji niż <code>sales-demo-pbx2</code>.</p>
+
+    <form id="cfgForm">
+      <fieldset>
+        <legend>Instance</legend>
+        <label for="siteName">Site name (CDN identifier) *</label>
+        <input id="siteName" required placeholder="masterpiece_ai" autocomplete="off">
+        <div class="hint">Z podkreśleniami (np. <code>masterpiece_ai</code>), nie myślnikami. To jest <code>&lt;site_name&gt;</code> w URL-u JS CDN. Wymaga whitelistowania domeny po stronie Printbox.</div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Editor Config</legend>
+
+        <label for="familyId">Product Family ID *</label>
+        <input id="familyId" required placeholder="325" autocomplete="off">
+
+        <label for="moduleId">Module ID (opcjonalne)</label>
+        <input id="moduleId" placeholder="" autocomplete="off">
+
+        <label for="productId">Product slug (opcjonalne — NIE numeric ID)</label>
+        <input id="productId" placeholder="hoodie-black" autocomplete="off">
+        <div class="hint">Musi być friendly-url slug (np. <code>hoodie-black</code>), nie numeryczne ID. Resolve: <code>GET /api/ec/v4/products/{id}/</code> → <code>friendly_url</code>.</div>
+
+        <div class="row">
+          <div>
+            <label for="storeName">Store name *</label>
+            <input id="storeName" required value="encore" autocomplete="off">
+          </div>
+          <div>
+            <label for="currency">Currency *</label>
+            <input id="currency" required value="USD" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="locale">Locale *</label>
+            <input id="locale" required value="en-us" autocomplete="off">
+          </div>
+          <div>
+            <label for="language">Language *</label>
+            <input id="language" required value="en" autocomplete="off">
+          </div>
+        </div>
+
+        <label for="sessionId">Session ID (puste = anonimowy)</label>
+        <input id="sessionId" placeholder="" autocomplete="off">
+
+        <label for="projectId">Project ID (puste = nowy projekt)</label>
+        <input id="projectId" placeholder="" autocomplete="off">
+      </fieldset>
+
+      <fieldset>
+        <legend>Pre-filled Attributes (opcjonalne)</legend>
+        <label for="attrs">attributeValues JSON</label>
+        <input id="attrs" placeholder='{"size":"10x15","paper":"gloss"}' autocomplete="off">
+        <div class="hint">Nie przekazuj przy wznawianiu projektu (projectId ustawiony).</div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit">Launch Editor</button>
+        <button type="button" class="secondary" id="clearBtn">Clear saved</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="editor-wrap">
+  <div class="topbar">
+    <span class="badge" id="badge-instance"></span>
+    <span class="badge" id="badge-family"></span>
+    <span class="badge" id="badge-store"></span>
+    <span class="badge" id="badge-session"></span>
+    <span class="spacer"></span>
+    <button type="button" class="theme-toggle" id="themeToggleTop" aria-label="Toggle theme" title="Toggle light/dark mode">
+      <span class="icon" id="themeIconTop">🌙</span>
+    </button>
+    <button class="secondary" onclick="location.href = '/'">↺ Restart</button>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'pbx-embed-demo-config-v1';
+const THEME_KEY = 'pbx-embed-demo-theme';
+
+// Theme: load saved preference, fall back to OS preference
+(function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  applyTheme(theme);
+})();
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const isDark = theme === 'dark';
+  const icon = isDark ? '☀️' : '🌙';
+  const label = isDark ? 'Light' : 'Dark';
+  const iconEl = document.getElementById('themeIcon');
+  const labelEl = document.getElementById('themeLabel');
+  const iconTopEl = document.getElementById('themeIconTop');
+  if (iconEl) iconEl.textContent = icon;
+  if (labelEl) labelEl.textContent = label;
+  if (iconTopEl) iconTopEl.textContent = icon;
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+document.getElementById('themeToggleTop').addEventListener('click', toggleTheme);
+
+// Follow OS preference changes when user hasn't explicitly chosen
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem(THEME_KEY)) applyTheme(e.matches ? 'dark' : 'light');
+  });
+}
+
+// Restore saved config
+try {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  for (const [k, v] of Object.entries(saved)) {
+    const el = document.getElementById(k);
+    if (el && v) el.value = v;
+  }
+} catch {}
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById('cfgForm').reset();
+  document.getElementById('storeName').value = 'encore';
+  document.getElementById('currency').value = 'USD';
+  document.getElementById('locale').value = 'en-us';
+  document.getElementById('language').value = 'en';
+});
+
+document.getElementById('cfgForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const cfg = {
+    siteName: document.getElementById('siteName').value.trim(),
+    familyId: document.getElementById('familyId').value.trim(),
+    moduleId: document.getElementById('moduleId').value.trim(),
+    productId: document.getElementById('productId').value.trim(),
+    storeName: document.getElementById('storeName').value.trim(),
+    currency: document.getElementById('currency').value.trim(),
+    locale: document.getElementById('locale').value.trim(),
+    language: document.getElementById('language').value.trim(),
+    sessionId: document.getElementById('sessionId').value.trim(),
+    projectId: document.getElementById('projectId').value.trim(),
+    attrs: document.getElementById('attrs').value.trim(),
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+  launchEditor(cfg);
+});
+
+function launchEditor(cfg) {
+  document.getElementById('badge-instance').textContent = 'instance: ' + cfg.siteName;
+  document.getElementById('badge-family').textContent = 'family: ' + cfg.familyId;
+  document.getElementById('badge-store').textContent = 'store: ' + cfg.storeName;
+  document.getElementById('badge-session').textContent = 'session: ' + (cfg.sessionId ? cfg.sessionId.slice(0, 8) + '…' : 'anonymous');
+
+  document.getElementById('form').classList.add('hidden');
+  document.getElementById('editor-wrap').classList.add('active');
+
+  const scriptUrl = `https://js-cdn.getprintbox.com/init/${encodeURIComponent(cfg.siteName)}/init.min.js`;
+  const script = document.createElement('script');
+  script.src = scriptUrl;
+  script.onload = () => initEditor(cfg);
+  script.onerror = () => showError(`
+    Failed to load Printbox script from:<br>
+    <code>${scriptUrl}</code><br><br>
+    Possible causes:<br>
+    1. Wrong <strong>site_name</strong> — must use underscores (e.g. <code>masterpiece_ai</code>), not hyphens<br>
+    2. <strong>CORS not whitelisted</strong> for this origin: <code>${location.origin}</code> — contact Printbox support<br>
+    3. Network / DNS error<br><br>
+    Verify with: <code>curl -I ${scriptUrl}</code> — should return 200 + <code>application/javascript</code>.
+  `);
+  document.head.appendChild(script);
+}
+
+// Gallery Link — product cards selection state
+document.querySelectorAll('#productGrid .product-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('#productGrid .product-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    card.querySelector('input[type="radio"]').checked = true;
+  });
+});
+
+// Personalization — toggle custom image block and preview
+const useCustomImage = document.getElementById('useCustomImage');
+const customImageBlock = document.getElementById('customImageBlock');
+const customImageFile = document.getElementById('customImageFile');
+const customImagePreview = document.getElementById('customImagePreview');
+let selectedImageFile = null;
+let lastPreviewObjectUrl = null;
+
+useCustomImage.addEventListener('change', () => {
+  customImageBlock.classList.toggle('hidden', !useCustomImage.checked);
+});
+
+customImageFile.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (lastPreviewObjectUrl) {
+    URL.revokeObjectURL(lastPreviewObjectUrl);
+    lastPreviewObjectUrl = null;
+  }
+  if (!file) {
+    selectedImageFile = null;
+    customImagePreview.classList.add('hidden');
+    customImagePreview.innerHTML = '';
+    return;
+  }
+  selectedImageFile = file;
+  lastPreviewObjectUrl = URL.createObjectURL(file);
+  customImagePreview.innerHTML = `<img src="${lastPreviewObjectUrl}" alt="preview">`;
+  customImagePreview.classList.remove('hidden');
+});
+
+async function uploadCustomImage(file) {
+  const res = await fetch('/api/upload-photo', {
+    method: 'POST',
+    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    body: file,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Upload failed: HTTP ${res.status}`);
+  if (!data.url) throw new Error('Upload response missing url');
+  return data.url;
+}
+
+// Gallery Link — create project via backend, then launch editor
+document.getElementById('galleryLaunchBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('galleryLaunchBtn');
+  const statusEl = document.getElementById('galleryStatus');
+  const productKey = document.querySelector('input[name="product"]:checked').value;
+  const photosRaw = document.getElementById('galleryPhotos').value.trim();
+  const photos = photosRaw ? photosRaw.split(/\r?\n/).map(s => s.trim()).filter(Boolean) : [];
+
+  btn.disabled = true;
+  let customImageUrl = null;
+
+  try {
+    if (useCustomImage.checked) {
+      if (!selectedImageFile) {
+        statusEl.className = 'status-box error';
+        statusEl.textContent = 'Wybierz plik zdjęcia lub odznacz "Chcę dodać własne zdjęcie".';
+        btn.disabled = false;
+        return;
+      }
+      statusEl.className = 'status-box info';
+      statusEl.textContent = `Wgrywam zdjęcie (${(selectedImageFile.size / 1024).toFixed(0)} KB) do Vercel Blob…`;
+      customImageUrl = await uploadCustomImage(selectedImageFile);
+    }
+
+    statusEl.className = 'status-box info';
+    statusEl.textContent = `Tworzę projekt ${productKey} przez backend…`;
+
+    const res = await fetch('/api/create-project', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productKey, photos }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      statusEl.className = 'status-box error';
+      const detail = typeof data.details === 'object' ? JSON.stringify(data.details, null, 2) : (data.details || '');
+      statusEl.innerHTML = `<strong>Błąd ${res.status}:</strong> ${data.error || 'unknown'}${detail ? '<br><br>' + detail.replace(/</g, '&lt;') : ''}`;
+      btn.disabled = false;
+      return;
+    }
+
+    statusEl.className = 'status-box success';
+    statusEl.innerHTML = `✓ Projekt utworzony: <strong>${data.uuid}</strong><br>${data.photoCount} zdjęć · site: <code>${data.siteName}</code>${customImageUrl ? '<br>customerImage1: <code>' + customImageUrl + '</code>' : ''}<br>Ładuję edytor…`;
+
+    const urlParams = new URLSearchParams({
+      projectId: data.uuid,
+      familyId: String(data.familyId),
+      siteName: data.siteName,
+    });
+    history.replaceState(null, '', location.pathname + '?' + urlParams.toString());
+
+    launchEditor({
+      siteName: data.siteName,
+      familyId: String(data.familyId),
+      moduleId: '',
+      productId: '',
+      storeName: 'encore',
+      currency: 'USD',
+      locale: 'en-us',
+      language: 'en',
+      sessionId: '',
+      projectId: data.uuid,
+      attrs: '',
+      customImageUrl,
+    });
+  } catch (e) {
+    console.error('[gallery-link] launch failed', e);
+    statusEl.className = 'status-box error';
+    statusEl.textContent = `Error: ${e.message}`;
+    btn.disabled = false;
+  }
+});
+
+function showError(html) {
+  document.getElementById('app').innerHTML = `<div class="error">${html}</div>`;
+}
+
+function initEditor(cfg) {
+  if (typeof printbox === 'undefined') {
+    showError('Printbox global is not defined after script load. Probably wrong site_name (returned non-JS content).');
+    return;
+  }
+
+  // Required callbacks
+  printbox.authUserRequest = async () => {
+    console.log('[demo] authUserRequest →', cfg.sessionId ? '(session)' : '(empty)');
+    return cfg.sessionId || '';
+  };
+  printbox.isUserLoggedIn = async () => !!cfg.sessionId;
+  printbox.refreshSession = async () => {
+    console.log('[demo] refreshSession requested');
+    return cfg.sessionId || '';
+  };
+  printbox.goToCartFinished = async (projectId, data) => {
+    console.log('[demo] goToCartFinished', { projectId, data });
+    const summary = [
+      'Project added to cart',
+      '',
+      `Project ID: ${projectId}`,
+      `Name: ${data?.project?.name ?? '(n/a)'}`,
+      `Qty: ${data?.project?.quantity ?? '(n/a)'}`,
+      `Price (gross): ${data?.project?.price?.gross ?? '(n/a)'} ${cfg.currency}`,
+      '',
+      '(See console for full payload.)',
+    ].join('\n');
+    alert(summary);
+    return true;
+  };
+
+  // Build editor params
+  const params = {
+    projectId: cfg.projectId || '',
+    productFamilyId: cfg.familyId,
+    storeName: cfg.storeName,
+    currency: cfg.currency,
+    sessionId: cfg.sessionId || '',
+    translationsLanguage: cfg.language,
+    contentLanguage: cfg.language,
+    language: cfg.language,
+    // Mirror the Printbox playground URL slug (/editor/playground) so the
+    // editor's internal routing matches their reference setup. Sub-paths
+    // pushed by the editor (eg /editor/playground/pic-frame) still collapse
+    // back to /editor/playground so we never double-nest on refresh.
+    ecommerceUrlPart: location.pathname.startsWith('/editor/playground')
+      ? location.origin + '/editor/playground'
+      : location.pathname.match(/^\/editor(\/|$)/)
+        ? location.origin + '/editor'
+        : (location.origin + location.pathname).replace(/\/$/, ''),
+    locale: cfg.locale,
+    useIframe: false,
+    forceTrailingSlashWhenGeneratingUrls: true,
+  };
+
+  if (cfg.moduleId) params.moduleId = cfg.moduleId;
+  if (cfg.productId) params.productId = cfg.productId;
+
+  // For "editor creates the project" flow (simple products like Frame) we
+  // hand a sidebar-ready photo list to setEditorConfig. The same first photo
+  // is also injected as personalizedPresentationContent.components.photo1
+  // below so a template-side photo1 component can place it directly without
+  // the user dragging from the sidebar — both paths coexist.
+  if (!cfg.projectId && Array.isArray(cfg.photosToUploadForNewProject) && cfg.photosToUploadForNewProject.length > 0) {
+    params.photosToUploadForNewProject = cfg.photosToUploadForNewProject;
+  }
+
+  // Programmatic attributeValues (Gallery Link → Frame) takes precedence;
+  // cfg.attrs is the manual-form JSON string fallback.
+  if (!cfg.projectId) {
+    if (cfg.attributeValues && typeof cfg.attributeValues === 'object') {
+      params.attributeValues = cfg.attributeValues;
+    } else if (cfg.attrs) {
+      try {
+        params.attributeValues = JSON.parse(cfg.attrs);
+      } catch (e) {
+        console.warn('[demo] Invalid attributeValues JSON, ignoring:', e);
+      }
+    }
+  }
+
+  // personalizedPresentationContent comes ONLY from admin-defined
+  // editorParams. No automatic fallback — leaving editorParams empty in
+  // admin means no personalization is sent to setEditorConfig.
+  const adminPersonalized = cfg.editorParams && cfg.editorParams.personalizedPresentationContent;
+  if (adminPersonalized && typeof adminPersonalized === 'object') {
+    params.personalizedPresentationContent = adminPersonalized;
+  }
+
+  // Spread any other keys admin defined in editorParams into setEditorConfig
+  // (personalizedPresentationContent already handled above).
+  if (cfg.editorParams && typeof cfg.editorParams === 'object') {
+    for (const [k, v] of Object.entries(cfg.editorParams)) {
+      if (k === 'personalizedPresentationContent') continue;
+      params[k] = v;
+    }
+  }
+
+  console.log('[demo] setEditorConfig', params);
+  try {
+    printbox.setEditorConfig(params);
+  } catch (e) {
+    showError(`setEditorConfig threw: <code>${e.message}</code><br><br>See console for stack.`);
+    console.error(e);
+  }
+}
+
+// Auto-restore: either reopen an existing project (projectId + familyId)
+// or kick off a new one inside the editor (familyId + photos JSON). The
+// editor handles project creation itself in the second path — no backend
+// round-trip. Everything else (siteName for CDN, store, currency, locale,
+// personalization) has sensible defaults below. localStorage shadow keyed
+// by projectId recovers personalization fields when the editor strips our
+// query params on its own URL pushes.
+const PBX_CTX_KEY = 'pbx-active-project';
+const DEFAULT_SITE_NAME = 'sales_demo';
+
+(function restoreFromUrl() {
+  const params = new URLSearchParams(location.search);
+  let projectId = params.get('projectId');
+  let familyId = params.get('familyId');
+  let siteName = params.get('siteName');
+  let customImageUrl = params.get('customImageUrl');
+  let bandName = params.get('bandName');
+  let concertDnV = params.get('concertDnV');
+  const productId = params.get('productId');  // slug, e.g. "pic-frame-portrait"
+  const photosParam = params.get('photos');
+  const attributeValuesParam = params.get('attributeValues');
+  const editorParamsRaw = params.get('editorParams');
+
+  if (projectId) {
+    try {
+      const saved = JSON.parse(localStorage.getItem(PBX_CTX_KEY) || '{}');
+      if (saved.projectId === projectId) {
+        familyId = familyId || saved.familyId;
+        siteName = siteName || saved.siteName;
+        customImageUrl = customImageUrl || saved.customImageUrl;
+        bandName = bandName || saved.bandName;
+        concertDnV = concertDnV || saved.concertDnV;
+      }
+    } catch (_) {}
+  }
+
+  // Need at minimum a familyId, plus either an existing projectId OR a photo
+  // list to seed a new project with. Anything less → show the manual form.
+  if (!familyId || (!projectId && !photosParam)) {
+    document.getElementById('form').style.display = '';
+    return;
+  }
+  if (!siteName) siteName = DEFAULT_SITE_NAME;
+
+  let photosToUploadForNewProject = null;
+  if (!projectId && photosParam) {
+    try { photosToUploadForNewProject = JSON.parse(photosParam); }
+    catch (e) { console.warn('[editor] could not parse ?photos=', e); }
+  }
+
+  let attributeValues = null;
+  if (!projectId && attributeValuesParam) {
+    try { attributeValues = JSON.parse(attributeValuesParam); }
+    catch (e) { console.warn('[editor] could not parse ?attributeValues=', e); }
+  }
+
+  let editorParams = null;
+  if (editorParamsRaw) {
+    try { editorParams = JSON.parse(editorParamsRaw); }
+    catch (e) { console.warn('[editor] could not parse ?editorParams=', e); }
+  }
+
+  // Only cache existing-project context — new-project flows don't have a
+  // UUID yet, the editor will assign one after createProject completes.
+  if (projectId) {
+    try {
+      localStorage.setItem(PBX_CTX_KEY, JSON.stringify({
+        projectId, familyId, siteName, customImageUrl, bandName, concertDnV,
+      }));
+    } catch (_) {}
+  }
+
+  launchEditor({
+    siteName,
+    familyId,
+    moduleId: '',
+    productId: productId || '',
+    storeName: 'encore',
+    currency: 'USD',
+    locale: 'en-us',
+    language: 'en',
+    sessionId: '',
+    projectId: projectId || '',
+    attrs: '',
+    customImageUrl: customImageUrl || null,
+    bandName: bandName || null,
+    concertDnV: concertDnV || null,
+    photosToUploadForNewProject,
+    attributeValues,
+    editorParams,
+  });
+})();
+</script>
+
+</body>
+</html>
