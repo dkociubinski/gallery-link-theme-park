@@ -112,6 +112,22 @@ const TP = (slug, w, h, opt = {}) => ({
   frame: opt.frame,
 });
 
+// Second, separate GCS shoot (couple + solo woman-A/woman-B sets, plus a
+// general-park tail) — lives in its own theme-park-2/ prefix, used for pass 2.
+const TP2_BASE = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/theme-park/theme-park-2';
+const TP2 = (slug, w, h, opt = {}) => ({
+  id: 'tp2-' + slug,
+  src: `${TP2_BASE}/${slug}.jpg`,
+  ar: h / w,
+  width: w,
+  height: h,
+  mimetype: 'image/jpeg',
+  hero: !!opt.hero,
+  pick: !!opt.pick,
+  grad: GRADS[(opt.g ?? 0) % GRADS.length],
+  frame: opt.frame,
+});
+
 // Pass 1 — Family Day: gentle rides, sweets, playground, parents resting.
 // Exactly 25 photos = Photobook's minPhotos, so nothing needs padding.
 const FAMILY_PHOTOS = [
@@ -171,8 +187,66 @@ const THRILL_PHOTOS = [
   TP('50_food_stalls',           1200, 896,  { hero: true,             g: 0, frame: 'TS25' }),
 ];
 
-const PHOTOS = FAMILY_PHOTOS;
-const PHOTOS_2 = THRILL_PHOTOS;
+// Pass 2 — couple shoot (ticket code all-2s, e.g. 222222): 50 photos from the
+// theme-park-2/ bucket — couple entrance shot, two solo tracks (woman-A,
+// woman-B) through the rides, then a general-park tail.
+const COUPLE_PHOTOS = [
+  TP2('01_couple_entrance',      1200,  896, { hero: true, g: 0, frame: 'CP01' }),
+  TP2('02_womanA_bumper_car',    1200,  896, { pick: true, g: 1, frame: 'CP02' }),
+  TP2('03_womanA_coaster',       1200,  896, { g: 2, frame: 'CP03' }),
+  TP2('04_womanA_lemonade',      1200,  896, { pick: true, g: 3, frame: 'CP04' }),
+  TP2('05_womanA_droptower',      896, 1200, { hero: true, g: 4, frame: 'CP05' }),
+  TP2('06_womanA_pirateship',    1200,  896, { g: 5, frame: 'CP06' }),
+  TP2('07_womanA_logflume',      1200,  896, { pick: true, g: 0, frame: 'CP07' }),
+  TP2('08_womanA_pointing',      1200,  896, { g: 1, frame: 'CP08' }),
+  TP2('09_womanA_icecream',      1200,  896, { pick: true, g: 2, frame: 'CP09' }),
+  TP2('10_womanA_sunglasses',     896, 1200, { hero: true, g: 3, frame: 'CP10' }),
+  TP2('11_womanA_highstriker',   1200,  896, { g: 4, frame: 'CP11' }),
+  TP2('12_womanA_teacups',       1024, 1024, { pick: true, g: 5, frame: 'CP12' }),
+  TP2('13_womanA_cottoncandy',    896, 1200, { g: 0, frame: 'CP13' }),
+  TP2('14_womanA_fencepeek',      896, 1200, { pick: true, g: 1, frame: 'CP14' }),
+  TP2('15_womanA_balloon',       1200,  896, { hero: true, g: 2, frame: 'CP15' }),
+  TP2('16_womanA_map',            896, 1200, { g: 3, frame: 'CP16' }),
+  TP2('17_womanB_bumpercar',     1200,  896, { pick: true, g: 4, frame: 'CP17' }),
+  TP2('18_womanB_coaster',       1200,  896, { g: 5, frame: 'CP18' }),
+  TP2('19_womanB_icecream',      1200,  896, { pick: true, g: 0, frame: 'CP19' }),
+  TP2('20_womanB_teacups',       1024, 1024, { hero: true, g: 1, frame: 'CP20' }),
+  TP2('21_womanB_splash',        1200,  896, { g: 2, frame: 'CP21' }),
+  TP2('22_womanB_balloonanimal', 1200,  896, { pick: true, g: 3, frame: 'CP22' }),
+  TP2('23_womanB_lemonade',      1200,  896, { g: 4, frame: 'CP23' }),
+  TP2('24_womanB_logflume',      1200,  896, { pick: true, g: 5, frame: 'CP24' }),
+  TP2('25_womanB_pointing',      1200,  896, { hero: true, g: 0, frame: 'CP25' }),
+  TP2('26_womanB_sunhat',         896, 1200, { g: 1, frame: 'CP26' }),
+  TP2('27_womanB_cottoncandy',    896, 1200, { pick: true, g: 2, frame: 'CP27' }),
+  TP2('28_womanB_pirateship',    1200,  896, { g: 3, frame: 'CP28' }),
+  TP2('29_womanB_chairoplane',   1200,  896, { pick: true, g: 4, frame: 'CP29' }),
+  TP2('30_womanB_droptower',      896, 1200, { hero: true, g: 5, frame: 'CP30' }),
+  TP2('31_womanB_map',            896, 1200, { g: 0, frame: 'CP31' }),
+  TP2('32_selfie',               1024, 1024, { pick: true, g: 1, frame: 'CP32' }),
+  TP2('33_walking',              1200,  896, { g: 2, frame: 'CP33' }),
+  TP2('34_entrance',             1200,  896, { pick: true, g: 3, frame: 'CP34' }),
+  TP2('35_lunch',                1200,  896, { hero: true, g: 4, frame: 'CP35' }),
+  TP2('36_family_coaster',       1200,  896, { g: 5, frame: 'CP36' }),
+  TP2('37_photoop',              1200,  896, { pick: true, g: 0, frame: 'CP37' }),
+  TP2('38_cheering',             1200,  896, { g: 1, frame: 'CP38' }),
+  TP2('39_ferriswheel',          1200,  896, { pick: true, g: 2, frame: 'CP39' }),
+  TP2('40_bench_icecream',       1200,  896, { hero: true, g: 3, frame: 'CP40' }),
+  TP2('41_highfive',             1200,  896, { g: 4, frame: 'CP41' }),
+  TP2('42_giftshop',             1200,  896, { pick: true, g: 5, frame: 'CP42' }),
+  TP2('43_steel_coaster',        1200,  896, { g: 0, frame: 'CP43' }),
+  TP2('44_wooden_coaster',        896, 1200, { pick: true, g: 1, frame: 'CP44' }),
+  TP2('45_ferris_wheel',         1200,  896, { hero: true, g: 2, frame: 'CP45' }),
+  TP2('46_carousel',             1200,  896, { g: 3, frame: 'CP46' }),
+  TP2('47_bumper_arena',         1200,  896, { pick: true, g: 4, frame: 'CP47' }),
+  TP2('48_drop_tower',            896, 1200, { g: 5, frame: 'CP48' }),
+  TP2('49_log_flume',            1200,  896, { pick: true, g: 0, frame: 'CP49' }),
+  TP2('50_food_stalls',          1200,  896, { hero: true, g: 1, frame: 'CP50' }),
+];
+
+// Pass 1 (default / any non-"all 2s" code) shows the full 50-photo family/thrill set.
+const PHOTOS = [...FAMILY_PHOTOS, ...THRILL_PHOTOS];
+// Pass 2 (all-2s code) shows the full 50-photo couple set.
+const PHOTOS_2 = COUPLE_PHOTOS;
 
 // two ticket passes; recognised from the ticket number
 const CONCERTS = [
