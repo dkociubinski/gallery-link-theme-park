@@ -7,42 +7,74 @@ const PBX_STORE_ID = parseInt(process.env.PBX_STORE_ID || '1', 10);
 // straight from there. Each request is validated and forwarded as-is to
 // POST /api/ec/v4/projects/.
 
-const DEMO_PHOTO_BASE = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/concertgallery';
+const DEMO_PHOTO_BASE = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/theme-park';
 const DEMO_PHOTO_SLUGS = [
-  ['01_stage_wide_crowd',           'Amazing crowd energy.'],
-  ['02_vocalist_closeup',           null],
-  ['03_crowd_mosh_energy',          null],
-  ['04_guitarist_solo_portrait',    'Epic guitar solo.'],
-  ['05_stage_pyro_flames',          null],
-  ['06_drummer_action_portrait',    null],
-  ['07_silhouette_backlit',         null],
-  ['08_crowd_surfer_action',        'Crowd surfing action!'],
-  ['09_bassist_low_angle',          null],
-  ['10_stage_from_pit',             null],
-  ['11_microphone_hands_detail',    null],
-  ['12_guitar_headstock_detail',    null],
-  ['13_stage_lights_abstract',      null],
-  ['14_vocalist_profile_intense',   null],
-  ['15_drummer_overhead',           null],
-  ['16_guitarist_jump_freeze',      null],
-  ['17_smoke_laser_beams',          'Incredible light show.'],
-  ['18_stage_dive_moment',          null],
-  ['19_full_band_wide',             null],
-  ['20_cymbal_crash_detail',        null],
-  ['21_confetti_finale',            'The grand finale!'],
-  ['22_spotlight_solo_moment',      null],
-  ['23_led_screen_visuals',         null],
-  ['24_bassist_profile',            null],
-  ['25_crowd_phone_lights',         null],
-  ['26_guitarist_silhouette',       null],
+  ['01_family_group_entrance',    'First steps into the park!'],
+  ['02_girl_carousel',            null],
+  ['03_bumper_car',               null],
+  ['04_kiddie_coaster',           null],
+  ['05_ice_cream',                null],
+  ['06_teacups',                  null],
+  ['07_splash',                   'Splash zone!'],
+  ['08_balloon',                  null],
+  ['09_mascot',                   null],
+  ['10_droptower_queue',          null],
+  ['11_playground',               null],
+  ['12_facepaint',                null],
+  ['13_cotton_candy',             null],
+  ['14_pirate_ship',              null],
+  ['15_sunhat',                   null],
+  ['16_balloon_animal',           null],
+  ['17_lemonade',                 null],
+  ['18_log_flume',                'Log flume drop!'],
+  ['19_pointing_coaster',         null],
+  ['20_map',                      null],
+  ['21_chairoplane',              null],
+  ['22_fence_peek',               null],
+  ['23_selfie',                   null],
+  ['24_walking',                  null],
+  ['25_entrance',                 null],
+  ['26_lunch',                    null],
+  ['27_family_coaster',           null],
+  ['28_photo_op',                 null],
+  ['29_cheering',                 'Best day ever!'],
+  ['30_swinging_hands',           null],
+  ['31_gift_shop',                null],
+  ['32_evening_show',             'The evening show.'],
+  ['33_bench_icecream',           null],
+  ['34_ferris_wheel_family',      null],
+  ['35_high_five',                null],
+  ['36_piggyback',                null],
+  ['37_family_icecream',          null],
+  ['38_parents_bench',            null],
+  ['39_mom_waiting',              null],
+  ['40_dad_photo',                null],
+  ['41_parents_cafe',             null],
+  ['42_parents_walk',             null],
+  ['43_steel_coaster',            null],
+  ['44_wooden_coaster',           null],
+  ['45_ferris_wheel',             'The big wheel.'],
+  ['46_carousel',                 null],
+  ['47_bumper_arena',             null],
+  ['48_drop_tower',               null],
+  ['49_log_flume_scenic',         null],
+  ['50_food_stalls',              null],
 ];
 
+// Actual pixel dimensions (read from the uploaded files, 2026-09-15) — most
+// are landscape 1200x896, a handful portrait 896x1200, three square 1024x1024.
+const PORTRAIT_SLUGS = new Set(['08_balloon', '10_droptower_queue', '13_cotton_candy', '15_sunhat', '20_map', '22_fence_peek', '39_mom_waiting', '44_wooden_coaster', '48_drop_tower']);
+const SQUARE_SLUGS = new Set(['02_girl_carousel', '06_teacups', '23_selfie']);
+
 const DEMO_PHOTOS = DEMO_PHOTO_SLUGS.map(([slug, caption]) => {
-  const metadata = { width: 3000, height: 2000, mimetype: 'image/jpeg' };
+  const [width, height] = SQUARE_SLUGS.has(slug) ? [1024, 1024] : PORTRAIT_SLUGS.has(slug) ? [896, 1200] : [1200, 896];
+  const metadata = { width, height, mimetype: 'image/jpeg' };
   if (caption) metadata.caption = caption;
   return {
     original_photo_url: `${DEMO_PHOTO_BASE}/${slug}.jpg`,
-    thumbnail_photo_url: `${DEMO_PHOTO_BASE}/thumb/${slug}_thumb.jpg`,
+    // No separate thumb/ variant exists for this bucket (unlike the old
+    // concertgallery one) — reuse the original as its own thumbnail.
+    thumbnail_photo_url: `${DEMO_PHOTO_BASE}/${slug}.jpg`,
     metadata,
   };
 });

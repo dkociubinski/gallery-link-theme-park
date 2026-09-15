@@ -22,7 +22,7 @@ const DEFAULT_PRODUCTS = [
     thumbnailUrl: 'assets/photobook.jpg',
     familyId: '305',
     productId: '7605',
-    minPhotos: 26,
+    minPhotos: 25,
     maxPhotos: 100,
     allowOwnPhotos: true,
   },

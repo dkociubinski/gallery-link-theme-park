@@ -18,13 +18,17 @@ const QrGhost = React.memo(function QrGhost() {
 });
 
 const STEPS = [
-  { n: '01', t: 'Scan your ticket', d: 'Unlock every shot from the night, instantly.' },
-  { n: '02', t: 'Pick your shots', d: 'Pro shots captured live at the concert — pick your favourites.' },
+  { n: '01', t: 'Scan your ticket', d: 'Unlock every shot from your visit, instantly.' },
+  { n: '02', t: 'Pick your shots', d: 'Pro shots captured live around the park — pick your favourites.' },
   { n: '03', t: 'Add your own', d: 'Drop in your phone photos to open the story.' },
-  { n: '04', t: 'Get your keepsake', d: 'A photobook, poster or calendar — made from your night.' },
+  { n: '04', t: 'Get your keepsake', d: 'A photobook, poster or calendar — made from your day.' },
 ];
 
-const HERO_IMG = 'https://images.unsplash.com/photo-1497911270199-1c552ee64aa4?auto=format&fit=crop&w=1800&q=72';
+// Wide establishing shot of the park (Ferris wheel + midway) — used as the
+// desktop hero backdrop.
+const HERO_IMG = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/theme-park/45_ferris_wheel.jpg';
+
+const Logo = (p) => <img src="assets/logo.svg" alt="" style={{ height: p.s || 20, width: p.s || 20, verticalAlign: 'middle', marginRight: 8, flexShrink: 0 }} />;
 
 function ScanScreen({ desktop, onScan, onManual, onTicket, theme, onToggleTheme }) {
   const [code, setCode] = useState('');
@@ -67,17 +71,17 @@ function ScanScreen({ desktop, onScan, onManual, onTicket, theme, onToggleTheme 
             : 'linear-gradient(180deg, rgba(8,8,10,0.55) 0%, rgba(8,8,10,0.82) 62%, var(--bg) 100%)' }} />
 
           <div className="row between" style={{ position: 'relative', zIndex: 2, padding: '28px 48px' }}>
-            <div className="wordmark">ENCORE</div>
+            <div className="wordmark row" style={{ alignItems: 'center' }}><Logo s={24} />STARLOOP</div>
             <button onClick={onToggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-2)', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
               {theme === 'light' ? '◐ Switch to dark' : '◐ Try light mode'}
             </button>
           </div>
 
           <div className="anim-up" style={{ position: 'relative', zIndex: 2, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '10px 24px 48px' }}>
-            <div className="kicker" style={{ marginBottom: 18 }}>✦ Your night, in print</div>
-            <h1 className="display" style={{ fontSize: 104, lineHeight: 0.88, margin: 0, color: 'var(--ink)' }}>Relive the night</h1>
+            <div className="kicker" style={{ marginBottom: 18 }}>✦ Your day, in print</div>
+            <h1 className="display" style={{ fontSize: 104, lineHeight: 0.88, margin: 0, color: 'var(--ink)' }}>Relive the day</h1>
             <p className="muted" style={{ fontSize: 16.5, lineHeight: 1.55, margin: '20px auto 0', maxWidth: 620 }}>
-              Every shot the night's photographers captured — unlocked with your ticket. Pick your moments, add your own, and print a keepsake worth keeping.
+              Every shot our park photographers captured — unlocked with your ticket. Pick your moments, add your own, and print a keepsake worth keeping.
             </p>
 
             {/* ticket card */}
@@ -180,15 +184,15 @@ function ScanScreen({ desktop, onScan, onManual, onTicket, theme, onToggleTheme 
       <div className="scroll">
         {/* top bar */}
         <div className="row" style={{ paddingTop: 'var(--top)', paddingLeft: 20, paddingRight: 20 }}>
-          <div className="wordmark">ENCORE</div>
+          <div className="wordmark row" style={{ alignItems: 'center' }}><Logo s={20} />STARLOOP</div>
         </div>
 
         {/* heading */}
         <div className="anim-up" style={{ padding: '22px 20px 16px' }}>
-          <div className="kicker" style={{ marginBottom: 12 }}>Your night, in print</div>
-          <h1 className="display" style={{ fontSize: 46, margin: 0, color: 'var(--ink)' }}>Relive the<br/>night</h1>
+          <div className="kicker" style={{ marginBottom: 12 }}>Your day, in print</div>
+          <h1 className="display" style={{ fontSize: 46, margin: 0, color: 'var(--ink)' }}>Relive the<br/>day</h1>
           <p className="muted" style={{ fontSize: 14.5, lineHeight: 1.5, margin: '12px 0 0', maxWidth: 300 }}>
-            Point your camera at the QR code on your ticket to unlock every shot from the night.
+            Point your camera at the QR code on your ticket to unlock every shot from your visit.
           </p>
         </div>
 
@@ -311,7 +315,7 @@ function TicketScreen({ onBack, onUnlock }) {
       {/* top */}
       <div className="row" style={{ paddingTop: 'var(--top)', paddingLeft: 18, paddingRight: 18, gap: 12 }}>
         <div className="glass icon-btn" style={{ width: 40, height: 40 }} onClick={onBack}><Ic.chevL s={19} c="var(--ink)" /></div>
-        <div className="wordmark" style={{ fontSize: 16 }}>ENCORE</div>
+        <div className="wordmark row" style={{ fontSize: 16, alignItems: 'center' }}><Logo s={18} />STARLOOP</div>
       </div>
 
       <div className="grow" style={{ padding: '30px 24px 0', display: 'flex', flexDirection: 'column' }}>
@@ -383,7 +387,7 @@ function UnlockScreen({ concert, onDone }) {
           {concert.venue.toUpperCase()} · {concert.date}
         </div>
         <div className="mono anim-up" style={{ fontSize: 10.5, color: 'var(--ink-3)', letterSpacing: '0.18em', marginTop: 34, animationDelay: '.9s' }}>
-          ENTERING THE PIT…
+          GATES OPENING…
         </div>
       </div>
     </div>

@@ -1,21 +1,21 @@
-// src/data.jsx — concert data, products, icons. Exports to window.
+// src/data.jsx — Starloop Park visit data, products, icons. Exports to window.
 
-// Concert 1 — rock (ticket all 1s, or default on scan)
+// Pass 1 — Family Day (ticket all 1s, or default on scan)
 const EVENT = {
-  artist: 'WITHERED CROWN',
-  tour: 'Resurrection Tour',
-  venue: 'O2 Academy · Brixton',
-  date: '31 MAY 2026',
-  shooter: 'NIGHTSHIFT COLLECTIVE',
+  artist: 'STARLOOP PARK',
+  tour: 'Family Day Pass',
+  venue: 'Starloop Park · East Gate',
+  date: '14 JUN 2026',
+  shooter: 'PARK PHOTO TEAM',
 };
 
-// Concert 2 — techno / electronic (ticket all 2s)
+// Pass 2 — Thrill Seeker (ticket all 2s)
 const EVENT_2 = {
-  artist: 'PULSE ENGINE',
-  tour: 'Modular Nights',
-  venue: 'Berghain · Berlin',
-  date: '14 JUN 2026',
-  shooter: 'STROBE LAB',
+  artist: 'STARLOOP PARK',
+  tour: 'Thrill Seeker Pass',
+  venue: 'Starloop Park · Summit Peak',
+  date: '21 JUN 2026',
+  shooter: 'PARK PHOTO TEAM',
 };
 
 // Frontend product list — replaced at runtime by loadProductsFromApi(), which
@@ -29,7 +29,7 @@ const EVENT_2 = {
 // PRODUCT_META below — keyed by id — so the cards stay nicely-decorated even
 // for products defined purely through admin.
 const DEFAULT_PRODUCTS = [
-  { id: 'book',  name: 'Photobook', thumbnailUrl: 'assets/photobook.jpg', familyId: '305', productId: '7605', minPhotos: 26, maxPhotos: 100, allowOwnPhotos: true },
+  { id: 'book',  name: 'Photobook', thumbnailUrl: 'assets/photobook.jpg', familyId: '305', productId: '7605', minPhotos: 25, maxPhotos: 100, allowOwnPhotos: true },
   { id: 'cal',   name: 'Calendar',  thumbnailUrl: 'assets/calendar.jpg',  familyId: '220', productId: '5809', minPhotos: 13, maxPhotos: 36 },
   { id: 'frame', name: 'Frame',     thumbnailUrl: 'assets/frame.jpg', minPhotos: 1, maxPhotos: 1,
     variants: [
@@ -42,11 +42,11 @@ const DEFAULT_PRODUCTS = [
 // Per-id frontend chrome (subtitle / price / blurb / desc). Anything not in
 // here defaults to empty strings in the renderer.
 const PRODUCT_META = {
-  book:  { sub: 'Hardcover · 28 pages', price: 'from $149', blurb: 'Your night, bound in print.',
-           desc: 'Lay-flat hardcover on museum-grade matte paper — every spread opens edge to edge, so the night plays back full-bleed.' },
-  cal:   { sub: '12 months · A3',       price: 'from $79',  blurb: 'A year in the pit.',
-           desc: 'Twelve months, one show per page. Sturdy A3, wire-bound and ready to hang — relive it all year.' },
-  frame: { sub: 'Print · framed',       price: 'from $49',  blurb: 'One night, one print.',
+  book:  { sub: 'Hardcover · 28 pages', price: 'from $149', blurb: 'Your day, bound in print.',
+           desc: 'Lay-flat hardcover on museum-grade matte paper — every spread opens edge to edge, so the day plays back full-bleed.' },
+  cal:   { sub: '12 months · A3',       price: 'from $79',  blurb: 'A year of park days.',
+           desc: 'Twelve months, one adventure per page. Sturdy A3, wire-bound and ready to hang — relive it all year.' },
+  frame: { sub: 'Print · framed',       price: 'from $49',  blurb: 'One day, one print.',
            desc: 'A single hero shot, archival print framed in matte black — ready to hang the moment it arrives.' },
 };
 
@@ -83,42 +83,25 @@ async function loadProductsFromApi() {
   }
 }
 
-// stage-light gradient fallbacks (used behind every tile so nothing looks broken)
+// tile gradient fallbacks (used behind every photo so nothing looks broken
+// while it loads, or if a src ever 404s)
 const GRADS = [
-  'radial-gradient(80% 70% at 30% 20%, #3a2a1c, #0c0b0d 70%)',
-  'radial-gradient(80% 70% at 70% 10%, #2a2030, #0b0b0e 70%)',
-  'radial-gradient(90% 80% at 50% 0%, #2c2c30, #0a0a0c 72%)',
-  'radial-gradient(80% 70% at 20% 30%, #322417, #0c0b0d 70%)',
-  'radial-gradient(80% 80% at 80% 20%, #1c2730, #0a0b0d 70%)',
-  'radial-gradient(90% 70% at 50% 15%, #332218, #0b0a0c 70%)',
+  'radial-gradient(80% 70% at 30% 20%, #2a3a2c, #0b0d0c 70%)',
+  'radial-gradient(80% 70% at 70% 10%, #203a2e, #0a0e0b 70%)',
+  'radial-gradient(90% 80% at 50% 0%, #2c3230, #0a0c0a 72%)',
+  'radial-gradient(80% 70% at 20% 30%, #323017, #0d0c0b 70%)',
+  'radial-gradient(80% 80% at 80% 20%, #1c2f30, #0a0d0d 70%)',
+  'radial-gradient(90% 70% at 50% 15%, #332818, #0b0a0a 70%)',
 ];
 
-// professional-looking concert shots (Unsplash). Each tile keeps a gradient
-// behind it; if the photo fails the gradient shows through.
-const U = (id, w) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=72`;
-const P = (id, ar, opt = {}) => {
-  const w = opt.hero ? 900 : 560;
-  return {
-    id: 'm' + id,
-    src: U(id, w),
-    ar,                       // aspect ratio h/w for masonry height
-    width: w,                 // Unsplash transform forces this width
-    height: Math.round(w * ar),
-    mimetype: 'image/jpeg',
-    hero: !!opt.hero,
-    pick: !!opt.pick,
-    grad: GRADS[(opt.g ?? 0) % GRADS.length],
-    frame: opt.frame,
-  };
-};
-
-// Real Withered Crown gallery uploaded to GCS (2026-06-12). The bucket path
-// uses "witthered" (two t's) intentionally — that's how the assets are
-// stored on the server; do not "correct" the spelling here.
-const WC_BASE = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/concertgallery/witthered-crown';
-const WC = (slug, w, h, opt = {}) => ({
-  id: 'wc-' + slug,
-  src: `${WC_BASE}/${slug}.jpg`,
+// Real Starloop Park gallery uploaded to GCS (2026-09-15). One full day's
+// shoot, split into two curated passes so the ticket-code demo (all-1s vs
+// all-2s) still shows two distinct galleries — everything here is a real
+// photo, nothing padded out with stock placeholders.
+const TP_BASE = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/theme-park';
+const TP = (slug, w, h, opt = {}) => ({
+  id: 'tp-' + slug,
+  src: `${TP_BASE}/${slug}.jpg`,
   ar: h / w,
   width: w,
   height: h,
@@ -129,160 +112,74 @@ const WC = (slug, w, h, opt = {}) => ({
   frame: opt.frame,
 });
 
-// Curated set shown first to Withered Crown viewers. Heroes = full-width
-// in the masonry; pick = preselected by "Select recommended".
-// Pixel dimensions verified against the actual files in the GCS bucket
-// (System.Drawing readout, 2026-06-22 batch — files 9–15 were earlier guesses
-// and several came out reversed; now matched 1:1 to bucket reality).
-const WITHERED_PHOTOS = [
-  WC('7drums', 768, 1376, { hero: true, pick: true, g: 0, frame: 'WC01' }),
-  WC('6',      1024, 1024, { pick: true,             g: 1, frame: 'WC02' }),
-  WC('3',      1408, 768,  { hero: true,             g: 2, frame: 'WC03' }),
-  WC('5',      1024, 1024, { pick: true,             g: 3, frame: 'WC04' }),
-  WC('1',      1408, 768,  { hero: true, pick: true, g: 4, frame: 'WC05' }),
-  WC('8',      768, 1376,  {                         g: 5, frame: 'WC06' }),
-  WC('4',      1024, 1024, {                         g: 0, frame: 'WC07' }),
-  WC('2',      1408, 768,  {                         g: 1, frame: 'WC08' }),
-  WC('9',      1264, 848,  { pick: true,             g: 2, frame: 'WC09' }),
-  WC('10',     848,  1264, {                         g: 3, frame: 'WC10' }),
-  WC('11',     1024, 1024, { hero: true,             g: 4, frame: 'WC11' }),
-  WC('12',     1264, 848,  {                         g: 5, frame: 'WC12' }),
-  WC('13',     848,  1264, { pick: true,             g: 0, frame: 'WC13' }),
-  WC('14',     1264, 848,  {                         g: 1, frame: 'WC14' }),
-  WC('15',     848,  1264, { hero: true,             g: 2, frame: 'WC15' }),
-  WC('17',     1024, 1024, {                         g: 3, frame: 'WC17' }),
+// Pass 1 — Family Day: gentle rides, sweets, playground, parents resting.
+// Exactly 25 photos = Photobook's minPhotos, so nothing needs padding.
+const FAMILY_PHOTOS = [
+  TP('01_family_group_entrance', 1200, 896,  { hero: true,             g: 0, frame: 'FD01' }),
+  TP('02_girl_carousel',         1024, 1024, { pick: true,             g: 1, frame: 'FD02' }),
+  TP('04_kiddie_coaster',        1200, 896,  {                         g: 2, frame: 'FD03' }),
+  TP('05_ice_cream',             1200, 896,  { pick: true,             g: 3, frame: 'FD04' }),
+  TP('06_teacups',               1024, 1024, {                         g: 4, frame: 'FD05' }),
+  TP('08_balloon',               896,  1200, {                         g: 5, frame: 'FD06' }),
+  TP('09_mascot',                1200, 896,  { pick: true,             g: 0, frame: 'FD07' }),
+  TP('11_playground',            1200, 896,  {                         g: 1, frame: 'FD08' }),
+  TP('12_facepaint',             1200, 896,  { pick: true,             g: 2, frame: 'FD09' }),
+  TP('13_cotton_candy',          896,  1200, {                         g: 3, frame: 'FD10' }),
+  TP('15_sunhat',                896,  1200, {                         g: 4, frame: 'FD11' }),
+  TP('16_balloon_animal',        1200, 896,  {                         g: 5, frame: 'FD12' }),
+  TP('17_lemonade',              1200, 896,  { pick: true,             g: 0, frame: 'FD13' }),
+  TP('22_fence_peek',            896,  1200, {                         g: 1, frame: 'FD14' }),
+  TP('26_lunch',                 1200, 896,  { hero: true,             g: 2, frame: 'FD15' }),
+  TP('27_family_coaster',        1200, 896,  { pick: true,             g: 3, frame: 'FD16' }),
+  TP('30_swinging_hands',        1200, 896,  {                         g: 4, frame: 'FD17' }),
+  TP('31_gift_shop',             1200, 896,  { hero: true,             g: 5, frame: 'FD18' }),
+  TP('33_bench_icecream',        1200, 896,  { pick: true,             g: 0, frame: 'FD19' }),
+  TP('34_ferris_wheel_family',   1200, 896,  { hero: true,             g: 1, frame: 'FD20' }),
+  TP('36_piggyback',             1200, 896,  {                         g: 2, frame: 'FD21' }),
+  TP('37_family_icecream',       1200, 896,  { pick: true,             g: 3, frame: 'FD22' }),
+  TP('38_parents_bench',         1200, 896,  {                         g: 4, frame: 'FD23' }),
+  TP('41_parents_cafe',          1200, 896,  { pick: true,             g: 5, frame: 'FD24' }),
+  TP('46_carousel',              1200, 896,  { hero: true,             g: 0, frame: 'FD25' }),
 ];
 
-const PHOTOS = [
-  // Real Withered Crown shots — always first in the gallery for this concert.
-  ...WITHERED_PHOTOS,
-  // Unsplash placeholders padding the set out to Photobook's 26-photo minimum.
-  P('1470229722913-7c0e2dbbafd3', 0.62, { hero: true, pick: true, g: 0, frame: '0118' }),
-  P('1501386761578-eac5c94b800a', 1.30, { pick: true, g: 1, frame: '0204' }),
-  P('1459749411175-04bf5292ceea', 1.05, { g: 2, frame: '0231' }),
-  P('1516280440614-37939bbacd81', 1.45, { g: 3, frame: '0288' }),
-  P('1429962714451-bb934ecdc4ec', 0.78, { pick: true, g: 4, frame: '0312' }),
-  P('1540039155733-5bb30b53aa14', 1.25, { g: 5, frame: '0349' }),
-  P('1524368535928-5b5e00ddc76b', 0.60, { hero: true, g: 1, frame: '0377' }),
-  P('1493676304819-0d7a8d026dcf', 1.35, { pick: true, g: 2, frame: '0401' }),
-  P('1471478331149-c72f17e33c73', 1.10, { g: 3, frame: '0428' }),
-  P('1506157786151-b8491531f063', 1.40, { g: 4, frame: '0452' }),
-  P('1533174072545-7a4b6ad7a6c3', 0.80, { pick: true, g: 5, frame: '0488' }),
-  P('1499364615650-ec38552f4f34', 1.20, { g: 0, frame: '0510' }),
-  P('1485872299829-c673f5194813', 0.64, { hero: true, pick: true, g: 3, frame: '0547' }),
-  P('1453090927415-5f45085b65c0', 1.30, { g: 1, frame: '0566' }),
-  P('1574391884720-bbc3740c59d1', 1.05, { g: 2, frame: '0598' }),
-  P('1492684223066-81342ee5ff30', 1.45, { pick: true, g: 4, frame: '0621' }),
-  P('1511735111819-9a3f7709049c', 1.15, { g: 5, frame: '0654' }),
-  P('1551845041-63e8e76836ea',    1.35, { g: 0, frame: '0689' }),
-  P('1563841930606-67e2bce48b78', 0.66, { hero: true, g: 2, frame: '0712' }),
-  P('1598387993441-a364f854c3e1', 1.25, { g: 3, frame: '0744' }),
-  P('1514525253161-7a46d19cd819', 0.65, { hero: true, g: 4, frame: '0768' }),
-  P('1493225457124-a3eb161ffa5f', 1.30, { pick: true, g: 5, frame: '0791' }),
-  P('1518972559570-7cc1309f3229', 1.05, { g: 0, frame: '0814' }),
-  P('1483393458019-411bc6bd104e', 1.40, { g: 1, frame: '0837' }),
-  P('1454908027598-28c44b1716c1', 0.82, { pick: true, g: 2, frame: '0860' }),
-  P('1470225620780-dba8ba36b745', 1.28, { g: 3, frame: '0883' }),
-  P('1524650359799-842906ca1c06', 1.12, { g: 4, frame: '0906' }),
-  P('1506377585622-bedcbb027afc', 1.36, { g: 5, frame: '0929' }),
-  // ── extra concert shots (added 2026-06-03) — bigger gallery ──
-  P('1565035010268-a3816f98589a', 0.66, { hero: true, g: 0, frame: '0952' }),
-  P('1522158637959-30385a09e0da', 0.70, { g: 1, frame: '0975' }),
-  P('1509824227185-9c5a01ceba0d', 1.35, { g: 2, frame: '0998' }),
-  P('1450044804117-534ccd6e6a3a', 0.78, { g: 3, frame: '1021' }),
-  P('1603910234616-3b5f4a6be2b4', 1.42, { g: 4, frame: '1044' }),
-  P('1488036106564-87ecb155bb15', 1.30, { g: 5, frame: '1067' }),
-  P('1603190287605-e6ade32fa852', 0.66, { hero: true, g: 1, frame: '1090' }),
-  P('1619229725920-ac8b63b0631a', 1.28, { g: 2, frame: '1113' }),
-  P('1600779547877-be592ef5aad3', 0.68, { g: 3, frame: '1136' }),
-  P('1558620013-a08999547a36',    0.60, { hero: true, g: 4, frame: '1159' }),
-  P('1468359601543-843bfaef291a', 1.05, { g: 5, frame: '1182' }),
-  P('1567942712661-82b9b407abbf', 0.75, { g: 0, frame: '1205' }),
-  P('1470229538611-16ba8c7ffbd7', 1.30, { g: 1, frame: '1228' }),
-  P('1497911270199-1c552ee64aa4', 0.72, { g: 2, frame: '1251' }),
-  P('1692271931628-adc2b16670dd', 1.40, { g: 3, frame: '1274' }),
-  P('1515175192010-cf3250992719', 0.66, { hero: true, g: 4, frame: '1297' }),
-  P('1510682657356-6ee07db8204b', 1.10, { g: 5, frame: '1320' }),
-  P('1501612780327-45045538702b', 0.66, { g: 0, frame: '1343' }),
-  P('1583795484071-3c453e3a7c71', 1.25, { g: 1, frame: '1366' }),
-  P('1577648884063-1d3d1477b8a7', 0.80, { g: 2, frame: '1389' }),
+// Pass 2 — Thrill Seeker: coasters, drop tower, log flume, queueing, cheering.
+const THRILL_PHOTOS = [
+  TP('03_bumper_car',            1200, 896,  { pick: true,             g: 0, frame: 'TS01' }),
+  TP('07_splash',                1200, 896,  {                         g: 1, frame: 'TS02' }),
+  TP('10_droptower_queue',       896,  1200, {                         g: 2, frame: 'TS03' }),
+  TP('14_pirate_ship',           1200, 896,  { pick: true,             g: 3, frame: 'TS04' }),
+  TP('18_log_flume',             1200, 896,  { pick: true,             g: 4, frame: 'TS05' }),
+  TP('19_pointing_coaster',      1200, 896,  { pick: true,             g: 5, frame: 'TS06' }),
+  TP('20_map',                   896,  1200, {                         g: 0, frame: 'TS07' }),
+  TP('21_chairoplane',           1200, 896,  {                         g: 1, frame: 'TS08' }),
+  TP('23_selfie',                1024, 1024, {                         g: 2, frame: 'TS09' }),
+  TP('24_walking',               1200, 896,  { pick: true,             g: 3, frame: 'TS10' }),
+  TP('25_entrance',              1200, 896,  { hero: true,             g: 4, frame: 'TS11' }),
+  TP('28_photo_op',              1200, 896,  {                         g: 5, frame: 'TS12' }),
+  TP('29_cheering',              1200, 896,  { pick: true,             g: 0, frame: 'TS13' }),
+  TP('32_evening_show',          1200, 896,  { hero: true,             g: 1, frame: 'TS14' }),
+  TP('35_high_five',             1200, 896,  {                         g: 2, frame: 'TS15' }),
+  TP('39_mom_waiting',           896,  1200, {                         g: 3, frame: 'TS16' }),
+  TP('40_dad_photo',             1200, 896,  { pick: true,             g: 4, frame: 'TS17' }),
+  TP('42_parents_walk',          1200, 896,  {                         g: 5, frame: 'TS18' }),
+  TP('43_steel_coaster',         1200, 896,  { hero: true,             g: 0, frame: 'TS19' }),
+  TP('44_wooden_coaster',        896,  1200, {                         g: 1, frame: 'TS20' }),
+  TP('45_ferris_wheel',          1200, 896,  { hero: true,             g: 2, frame: 'TS21' }),
+  TP('47_bumper_arena',          1200, 896,  { pick: true,             g: 3, frame: 'TS22' }),
+  TP('48_drop_tower',            896,  1200, {                         g: 4, frame: 'TS23' }),
+  TP('49_log_flume_scenic',      1200, 896,  { pick: true,             g: 5, frame: 'TS24' }),
+  TP('50_food_stalls',           1200, 896,  { hero: true,             g: 0, frame: 'TS25' }),
 ];
 
-// Real Pulse Engine gallery — same GCS bucket as Withered Crown, just under
-// concertgallery/pulse-engine/. Was on Vercel Blob initially (2026-06-17)
-// until thumbnails got generated on GCS (2026-06-22), so we switched over to
-// pick up deriveThumbUrl()'s _versions/<file>_large.<ext> sibling for free.
-const PE_BASE = 'https://storage.googleapis.com/pbx2-sales-demo/media/uploads/concertgallery/pulse-engine';
-const PE = (slug, w, h, opt = {}) => ({
-  id: 'pe-' + slug,
-  src: `${PE_BASE}/${slug}.jpg`,
-  ar: h / w,
-  width: w,
-  height: h,
-  mimetype: 'image/jpeg',
-  hero: !!opt.hero,
-  pick: !!opt.pick,
-  grad: GRADS[(opt.g ?? 0) % GRADS.length],
-  frame: opt.frame,
-});
+const PHOTOS = FAMILY_PHOTOS;
+const PHOTOS_2 = THRILL_PHOTOS;
 
-const PULSE_PHOTOS = [
-  PE('1',  1024, 1024, { pick: true,             g: 0, frame: 'PE01' }),
-  PE('2',  1264, 848,  { hero: true,             g: 1, frame: 'PE02' }),
-  PE('3',  848,  1264, { hero: true, pick: true, g: 2, frame: 'PE03' }),
-  PE('4',  1024, 1024, {                         g: 3, frame: 'PE04' }),
-  PE('5',  1264, 848,  { pick: true,             g: 4, frame: 'PE05' }),
-  PE('6',  848,  1264, {                         g: 5, frame: 'PE06' }),
-  PE('7',  1024, 1024, { pick: true,             g: 0, frame: 'PE07' }),
-  PE('8',  1264, 848,  { hero: true,             g: 1, frame: 'PE08' }),
-  PE('9',  848,  1264, {                         g: 2, frame: 'PE09' }),
-  PE('10', 1264, 848,  {                         g: 3, frame: 'PE10' }),
-  PE('11', 1024, 1024, { hero: true,             g: 4, frame: 'PE11' }),
-  PE('12', 848,  1264, { pick: true,             g: 5, frame: 'PE12' }),
-  PE('13', 1264, 848,  {                         g: 0, frame: 'PE13' }),
-  PE('14', 848,  1264, {                         g: 1, frame: 'PE14' }),
-];
-
-// Concert 2 placeholder pool — Unsplash shots kept around for volume until
-// the real Pulse Engine gallery grows; interleaved with PULSE_PHOTOS below.
-const PULSE_PLACEHOLDERS = [
-  P('1501612780327-45045538702b', 0.66, { hero: true, g: 1, frame: 'B021' }),
-  P('1546707012-c46675f12716',    1.30, { g: 4, frame: 'B044' }),
-  P('1558620013-a08999547a36',    1.05, { g: 2, frame: 'B067' }),
-  P('1450044804117-534ccd6e6a3a', 1.42, { g: 1, frame: 'B090' }),
-  P('1429514513361-8fa32282fd5f', 0.66, { hero: true, g: 4, frame: 'B113' }),
-  P('1509824227185-9c5a01ceba0d', 1.35, { g: 2, frame: 'B136' }),
-  P('1510682657356-6ee07db8204b', 0.70, { g: 5, frame: 'B159' }),
-  P('1573152958734-1922c188fba3', 1.10, { g: 0, frame: 'B182' }),
-  P('1603910234616-3b5f4a6be2b4', 1.40, { g: 3, frame: 'B205' }),
-  P('1515175192010-cf3250992719', 0.66, { hero: true, g: 1, frame: 'B228' }),
-  P('1470229538611-16ba8c7ffbd7', 1.28, { g: 2, frame: 'B251' }),
-  P('1567942712661-82b9b407abbf', 0.75, { g: 0, frame: 'B274' }),
-  P('1492684223066-81342ee5ff30', 1.45, { g: 4, frame: 'B297' }),
-  P('1522158637959-30385a09e0da', 0.70, { g: 1, frame: 'B320' }),
-  P('1511735111819-9a3f7709049c', 1.15, { g: 5, frame: 'B343' }),
-  P('1518972559570-7cc1309f3229', 1.05, { g: 0, frame: 'B366' }),
-];
-
-// Interleave Pulse Engine real shots with the placeholder pool so the gallery
-// reads as a mixed set rather than 14 reals followed by a placeholder tail.
-function interleave(a, b) {
-  const out = [];
-  const max = Math.max(a.length, b.length);
-  for (let i = 0; i < max; i++) {
-    if (i < a.length) out.push(a[i]);
-    if (i < b.length) out.push(b[i]);
-  }
-  return out;
-}
-const PHOTOS_2 = interleave(PULSE_PHOTOS, PULSE_PLACEHOLDERS);
-
-// two concert sets; recognised from the ticket number
+// two ticket passes; recognised from the ticket number
 const CONCERTS = [
-  { ...EVENT, genre: 'ROCK', photos: PHOTOS },
-  { ...EVENT_2, genre: 'TECHNO', photos: PHOTOS_2 },
+  { ...EVENT, genre: 'FAMILY', photos: PHOTOS },
+  { ...EVENT_2, genre: 'THRILL', photos: PHOTOS_2 },
 ];
-// all 2s → concert 2 (techno); anything else (incl. all 1s / scan / empty) → concert 1 (rock)
+// all 2s → pass 2 (thrill seeker); anything else (incl. all 1s / scan / empty) → pass 1 (family day)
 function concertForCode(code) {
   const s = String(code || '').replace(/\D/g, '');
   return /^2+$/.test(s) ? CONCERTS[1] : CONCERTS[0];

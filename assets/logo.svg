@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Starloop Park mark — flat-design Ferris wheel -->
+  <g fill="none" stroke-linecap="round">
+    <!-- A-frame support legs -->
+    <path d="M50 84 L27 96 M50 84 L73 96 M38 90 L62 90" stroke="#3a3550" stroke-width="4"/>
+    <!-- rim -->
+    <circle cx="50" cy="50" r="34" stroke="#2b2740" stroke-width="5"/>
+    <!-- spokes -->
+    <g stroke="#5b5478" stroke-width="2.4">
+      <path d="M50 16 L50 84"/>
+      <path d="M16 50 L84 50"/>
+      <path d="M26 26 L74 74"/>
+      <path d="M74 26 L26 74"/>
+    </g>
+    <!-- hub -->
+    <circle cx="50" cy="50" r="6.5" fill="#2b2740" stroke="none"/>
+  </g>
+  <!-- gondola cars -->
+  <g stroke="#2b2740" stroke-width="1.6">
+    <rect x="45.5" y="10" width="9" height="8" rx="2" fill="#ff6b57"/>
+    <rect x="45.5" y="82" width="9" height="8" rx="2" fill="#ffb648"/>
+    <rect x="11" y="45.5" width="9" height="8" rx="2" fill="#3ec1c9" transform="rotate(90 15.5 49.5)"/>
+    <rect x="79" y="45.5" width="9" height="8" rx="2" fill="#7bc86c" transform="rotate(90 83.5 49.5)"/>
+    <rect x="22" y="22" width="9" height="8" rx="2" fill="#ffb648" transform="rotate(45 26.5 26)"/>
+    <rect x="68" y="22" width="9" height="8" rx="2" fill="#5b8def" transform="rotate(-45 72.5 26)"/>
+    <rect x="22" y="70" width="9" height="8" rx="2" fill="#5b8def" transform="rotate(-45 26.5 74)"/>
+    <rect x="68" y="70" width="9" height="8" rx="2" fill="#ff6b57" transform="rotate(45 72.5 74)"/>
+  </g>
+</svg>

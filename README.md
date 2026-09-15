@@ -1,6 +1,6 @@
 # Printbox Embed — Gallery Link Theme Park
 
-> Klon [gallery-link](https://github.com/pbx-user/gallery-link) (deployed jako `gallery-link-pink.vercel.app`), pod osobną domenę/projekt Vercel. Ta sama instancja PBX2 (`sales-demo`), ten sam content na razie — patrz sekcja „Co jeszcze zostało do zrobienia ręcznie" na dole.
+> Klon [gallery-link](https://github.com/pbx-user/gallery-link) (deployed jako `gallery-link-pink.vercel.app`), pod osobną domenę/projekt Vercel. Ta sama instancja PBX2 (`sales-demo`). Content przemianowany na fikcyjny theme park **Starloop Park** (logo, nazwa, hero image, 50 realnych zdjęć zamiast koncertowych) — patrz sekcja „Co jeszcze zostało do zrobienia ręcznie" na dole.
 
 Aplikacja do tworzenia projektów Printbox z platformy zdjęciowej. Static HTML + React (in-browser Babel) frontend + Vercel serverless backend. Bez build steps.
 
@@ -28,16 +28,17 @@ Refresh / duplicate-tab na `/editor.html?...` re-otwiera projekt bezpośrednio (
 
 | UI id   | UI name    | Backend productKey                                         | family_id | product_id                | min photos |
 |---------|------------|------------------------------------------------------------|-----------|---------------------------|------------|
-| `book`  | Photobook  | `Photobook` / `PhotobookWithered` / `PhotobookPulse`       | 305       | 7605 / 7609 / 7608        | 26         |
+| `book`  | Photobook  | `Photobook`                                                 | 305       | 7605                      | 25         |
 | `cal`   | Calendar   | `Calendar`                                                 | 220       | 5809                      | 13         |
 | `frame` | Frame      | `Frame` / `FramePortrait` / `FrameLandscape`               | 304       | 7519 / 7607 / 7606        | 1          |
 
 Mapowanie id → productKey jest w `src/upload.jsx` (`PRODUCT_KEY_BY_ID` + `frameProductKey` + `photobookProductKey`).
 
-**Photobook** wybiera wariant per zespół z `concert.artist`:
-- `'WITHERED CROWN'` → `PhotobookWithered` (7609)
-- `'PULSE ENGINE'` → `PhotobookPulse` (7608)
-- inne → `Photobook` (7605, fallback)
+Photobook jest flat (bez `variants[]`) — zawsze `Photobook` (7605). Band-keyed
+variant matching (`concert.artist` → osobny productId per marka) istnieje
+jako generyczny mechanizm w `pickProductSpec`/`api/products.js`, ale nie jest
+obecnie wpięty dla żadnego produktu Starloop Park — obie przepustki (`Family
+Day`/`Thrill Seeker`) dzielą ten sam `concert.artist = 'STARLOOP PARK'`.
 
 **Frame** wybiera wariant na bazie `ar` (height/width) wybranego zdjęcia:
 - `ar ∈ [0.95, 1.05]` → `Frame` (square, 7519)
@@ -50,11 +51,11 @@ Aktualne listy `PRODUCTS` po obu stronach muszą zgadzać się minimami — fron
 
 | Produkt   | family_id | product_id | min photos |
 |-----------|-----------|------------|------------|
-| Photobook | 305       | 7605       | 26         |
+| Photobook | 305       | 7605       | 25         |
 | Calendar  | 220       | 5809       | 13         |
 | Frame     | 304       | 7519       | 1          |
 
-Domyślny zestaw zdjęć (concert gallery, hostowany na `storage.googleapis.com/pbx2-sales-demo`) jest wbudowany w backend i sliced do `min_photos` per produkt. Frontend może podać własne URL-e (textarea, jeden na linię) — wtedy override.
+Domyślny zestaw zdjęć (Starloop Park gallery, hostowany na `storage.googleapis.com/pbx2-sales-demo/media/uploads/theme-park`) jest wbudowany w backend i sliced do `min_photos` per produkt. Frontend może podać własne URL-e (textarea, jeden na linię) — wtedy override.
 
 ## Wymagane env vars (Vercel)
 
@@ -179,4 +180,4 @@ Ten folder to gotowy, samodzielny klon (fresh git repo, `package.json` przemiano
 6. **Poproś Printbox support o whitelisting** nowej domeny (lub tymczasowego `*.vercel.app` URL-a) dla `site_name = sales_demo` — bez tego edytor się nie odpali (CORS/404).
 7. Smoke test wg sekcji „Smoke test" wyżej.
 
-Content (koncerty, zdjęcia, branding „ENCORE", katalog produktów) na razie **nie został zmieniony** — patrz punkt „Content" w rozmowie, wróć do tego jak będziesz gotów podmieniać.
+Content zmieniony na Starloop Park: nowe logo (`assets/logo.svg`, Ferris wheel), wordmark „STARLOOP", hero image (`src/scan.jsx` HERO_IMG), 50 realnych zdjęć parku rozrywki (`src/data.jsx` FAMILY_PHOTOS/THRILL_PHOTOS) zamiast koncertowych, oraz przerobione miniatury produktów (`assets/photobook.jpg` / `calendar.jpg` / `frame.jpg` — oryginały pokazywały wprost napis „WITHERED CROWN", więc trzeba było je podmienić, nie tylko dane). Katalog produktów (familyId/productId) **nie został zmieniony** — nadal wskazuje na te same produkty co oryginał (ta sama instancja PBX2).
