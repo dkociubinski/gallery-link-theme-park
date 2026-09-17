@@ -212,7 +212,7 @@ Zostaw puste = backend użyje zestawu demo z koncertu (sliced do min_photos dla 
         <div class="row">
           <div>
             <label for="storeName">Store name *</label>
-            <input id="storeName" required value="encore" autocomplete="off">
+            <input id="storeName" required value="starloop" autocomplete="off">
           </div>
           <div>
             <label for="currency">Currency *</label>
@@ -322,7 +322,7 @@ try {
 document.getElementById('clearBtn').addEventListener('click', () => {
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById('cfgForm').reset();
-  document.getElementById('storeName').value = 'encore';
+  document.getElementById('storeName').value = 'starloop';
   document.getElementById('currency').value = 'USD';
   document.getElementById('locale').value = 'en-us';
   document.getElementById('language').value = 'en';
@@ -483,7 +483,7 @@ document.getElementById('galleryLaunchBtn').addEventListener('click', async () =
       familyId: String(data.familyId),
       moduleId: '',
       productId: '',
-      storeName: 'encore',
+      storeName: 'starloop',
       currency: 'USD',
       locale: 'en-us',
       language: 'en',
@@ -689,7 +689,7 @@ const DEFAULT_SITE_NAME = 'sales_demo';
     familyId,
     moduleId: '',
     productId: productId || '',
-    storeName: 'encore',
+    storeName: 'starloop',
     currency: 'USD',
     locale: 'en-us',
     language: 'en',
